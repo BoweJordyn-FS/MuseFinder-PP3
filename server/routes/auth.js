@@ -5,6 +5,6 @@ const passportServices = require('../services/passport');
 const requireLogin = passport.authenticate('local', { session: false });
 const AuthController = require('../controllers/auth_controller');
 
-router.post('/', AuthController.signup);
+router.post('/signup', AuthController.signup);
 router.post('/login', requireLogin, AuthController.login);
 module.exports = router;
