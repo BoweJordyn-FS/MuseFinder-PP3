@@ -1,69 +1,117 @@
-import Image from "next/image";
+import { CiSearch } from 'react-icons/ci';
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.js
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+	return (
+		<div>
+			<main>
+				<div className="flex flex-col justify-center p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10">
+					<form className="mx-2 sm:mx-10 lg:mx-20">
+						<div className="relative">
+							<CiSearch
+								className="absolute left-3 top-1/2 -translate-y-1/2 text-[#925FF0]"
+								size={24}
+							/>
+							<input
+								id="search"
+								type="search"
+								className="border w-full p-2 pl-10 rounded-md focus:outline-3 focus:outline-offset-2 focus:outline-[#925FF0]"
+								placeholder="Search for artists, albums, or songs..."
+							/>
+						</div>
+					</form>
+
+					<section className="p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10 grid grid-cols-3 gap-10">
+						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+							<h2 className="text-xl font-bold self-center">New Release</h2>
+						</div>
+						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+							<h2 className="text-xl font-bold self-center">New Release</h2>
+						</div>
+						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+							<h2 className="text-xl font-bold self-center">New Release</h2>
+						</div>
+						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+							<h2 className="text-xl font-bold self-center">New Release</h2>
+						</div>
+						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+							<h2 className="text-xl font-bold self-center">New Release</h2>
+						</div>
+						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+							<h2 className="text-xl font-bold self-center">New Release</h2>
+						</div>
+					</section>
+
+					{/* search results */}
+					{/* <section className="p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10 flex flex-col gap-20">
+						<div
+							id="artistRow"
+							className="flex flex-row gap-4"
+						>
+							<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 mr-12">
+								<h2 className="text-xl font-bold self-center">Artists</h2>
+							</div>
+							<div
+								id="artistResults"
+								className="flex flex-row gap-6"
+							>
+								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
+									<p className="text-xl font-bold self-center">Artist Name</p>
+								</div>
+								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
+									<p className="text-xl font-bold self-center">Artist Name</p>
+								</div>
+								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
+									<p className="text-xl font-bold self-center">Artist Name</p>
+								</div>
+							</div>
+						</div>
+						<div
+							id="albumRow"
+							className="flex flex-row gap-4"
+						>
+							<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 mr-12">
+								<p className="text-xl font-bold self-center">Albums</p>
+							</div>
+							<div
+								id="albumResults"
+								className="flex flex-row gap-6"
+							>
+								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
+									<p className="text-xl font-bold self-center">Album Name</p>
+								</div>
+								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
+									<p className="text-xl font-bold self-center">Album Name</p>
+								</div>
+								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
+									<p className="text-xl font-bold self-center">Album Name</p>
+								</div>
+							</div>
+						</div>
+						<div
+							id="songRow"
+							className="flex flex-row gap-4"
+						>
+							<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 mr-12">
+								<p className="text-xl font-bold self-center">Songs</p>
+							</div>
+							<div
+								id="songResults"
+								className="flex flex-row gap-6"
+							>
+								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
+									<p className="text-xl font-bold self-center">Song Name</p>
+								</div>
+								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
+									<p className="text-xl font-bold self-center">Song Name</p>
+								</div>
+								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
+									<p className="text-xl font-bold self-center">Song Name</p>
+								</div>
+							</div>
+						</div>
+					</section> */}
+				</div>
+			</main>
+		</div>
+	);
 }
