@@ -1,4 +1,6 @@
 import { CiSearch } from 'react-icons/ci';
+import { BsSoundwave } from 'react-icons/bs';
+import { Group, Scroller } from '@mantine/core';
 
 export default function Home() {
 	return (
@@ -20,7 +22,7 @@ export default function Home() {
 						</div>
 					</form>
 
-					<section className="p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10 grid grid-cols-3 gap-10">
+					{/* <section className="p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10 grid grid-cols-3 gap-10">
 						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
 							<h2 className="text-xl font-bold self-center">New Release</h2>
 						</div>
@@ -38,78 +40,114 @@ export default function Home() {
 						</div>
 						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
 							<h2 className="text-xl font-bold self-center">New Release</h2>
-						</div>
-					</section>
-
-					{/* search results */}
-					{/* <section className="p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10 flex flex-col gap-20">
-						<div
-							id="artistRow"
-							className="flex flex-row gap-4"
-						>
-							<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 mr-12">
-								<h2 className="text-xl font-bold self-center">Artists</h2>
-							</div>
-							<div
-								id="artistResults"
-								className="flex flex-row gap-6"
-							>
-								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
-									<p className="text-xl font-bold self-center">Artist Name</p>
-								</div>
-								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
-									<p className="text-xl font-bold self-center">Artist Name</p>
-								</div>
-								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
-									<p className="text-xl font-bold self-center">Artist Name</p>
-								</div>
-							</div>
-						</div>
-						<div
-							id="albumRow"
-							className="flex flex-row gap-4"
-						>
-							<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 mr-12">
-								<p className="text-xl font-bold self-center">Albums</p>
-							</div>
-							<div
-								id="albumResults"
-								className="flex flex-row gap-6"
-							>
-								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
-									<p className="text-xl font-bold self-center">Album Name</p>
-								</div>
-								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
-									<p className="text-xl font-bold self-center">Album Name</p>
-								</div>
-								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
-									<p className="text-xl font-bold self-center">Album Name</p>
-								</div>
-							</div>
-						</div>
-						<div
-							id="songRow"
-							className="flex flex-row gap-4"
-						>
-							<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 mr-12">
-								<p className="text-xl font-bold self-center">Songs</p>
-							</div>
-							<div
-								id="songResults"
-								className="flex flex-row gap-6"
-							>
-								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
-									<p className="text-xl font-bold self-center">Song Name</p>
-								</div>
-								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
-									<p className="text-xl font-bold self-center">Song Name</p>
-								</div>
-								<div className="flex justify-center border rounded-md border-white-300 w-80 h-80">
-									<p className="text-xl font-bold self-center">Song Name</p>
-								</div>
-							</div>
 						</div>
 					</section> */}
+
+					{/* search results */}
+					<section className="p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10 flex flex-col gap-20">
+						<article>
+							<div className="border-b-2 border-[#925FF0] mb-10">
+								<h2 className="text-3xl font-bold text-[#925FF0]">Artists</h2>
+							</div>
+							<div
+								id="artistRow"
+								className="flex flex-row gap-4"
+							>
+								<Scroller
+									draggable
+									edgeGradientColor="transparent"
+									startControlIcon={<BsSoundwave size={20} />}
+									endControlIcon={<BsSoundwave size={20} />}
+								>
+									<Group
+										id="artistResults"
+										justify="center"
+										gap="md"
+										wrap="nowrap"
+									>
+										{Array.from({ length: 6 }).map((_, index) => (
+											<div
+												key={index}
+												className="flex justify-center border rounded-md border-white-300 w-80 h-80"
+											>
+												<p className="text-xl font-bold self-center">
+													Artist Name
+												</p>
+											</div>
+										))}
+									</Group>
+								</Scroller>
+							</div>
+						</article>
+						<article>
+							<div className="border-b-2 border-[#925FF0] mb-10">
+								<h2 className="text-3xl font-bold text-[#925FF0]">Albums</h2>
+							</div>
+							<div
+								id="albumRow"
+								className="flex flex-row gap-4"
+							>
+								<Scroller
+									draggable
+									edgeGradientColor="transparent"
+									startControlIcon={<BsSoundwave size={20} />}
+									endControlIcon={<BsSoundwave size={20} />}
+								>
+									<Group
+										id="albumResults"
+										justify="center"
+										gap="md"
+										wrap="nowrap"
+									>
+										{Array.from({ length: 6 }).map((_, index) => (
+											<div
+												key={index}
+												className="flex justify-center border rounded-md border-white-300 w-80 h-80"
+											>
+												<p className="text-xl font-bold self-center">
+													Album Name
+												</p>
+											</div>
+										))}
+									</Group>
+								</Scroller>
+							</div>
+						</article>
+						<article>
+							<div className="border-b-2 border-[#925FF0] mb-10">
+								<h2 className="text-3xl font-bold text-[#925FF0]">Tracks</h2>
+							</div>
+							<div
+								id="songRow"
+								className="flex flex-row gap-4"
+							>
+								<Scroller
+									draggable
+									edgeGradientColor="transparent"
+									startControlIcon={<BsSoundwave size={20} />}
+									endControlIcon={<BsSoundwave size={20} />}
+								>
+									<Group
+										id="songResults"
+										justify="center"
+										gap="md"
+										wrap="nowrap"
+									>
+										{Array.from({ length: 6 }).map((_, index) => (
+											<div
+												key={index}
+												className="flex justify-center border rounded-md border-white-300 w-80 h-80"
+											>
+												<p className="text-xl font-bold self-center">
+													Song Name
+												</p>
+											</div>
+										))}
+									</Group>
+								</Scroller>
+							</div>
+						</article>
+					</section>
 				</div>
 			</main>
 		</div>
