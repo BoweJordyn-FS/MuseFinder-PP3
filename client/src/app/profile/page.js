@@ -1,7 +1,7 @@
 import React from 'react';
 
 function Profile() {
-	return <div></div>;
+	return <main className="flex justify-center"></main>;
 }
 
 export default Profile;

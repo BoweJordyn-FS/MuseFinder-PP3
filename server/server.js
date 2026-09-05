@@ -1,7 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path');
 const dotenv = require('dotenv');
 const passport = require('passport');
 
@@ -30,12 +29,10 @@ require('./services/passport');
 const authRoutes = require('./routes/auth');
 app.use('/spotify/v1/auth', authRoutes);
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client/build')));
-
-// Catch-all route to serve the React app for any other requests
-app.get('/{*splat}', (req, res) => {
-	res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+// The Next.js client runs on its own server, so anything that reaches here
+// is an unmatched API route
+app.use((req, res) => {
+	res.status(404).json({ error: `Not found: ${req.method} ${req.originalUrl}` });
 });
 
 app.listen(PORT, () => {
