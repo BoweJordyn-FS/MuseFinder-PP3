@@ -25,7 +25,9 @@ If either command prints a result, stop that process before continuing.
 
 MongoDB also has to be running before the backend will connect. On macOS with Homebrew:
 
-````
+```bash
+brew services start mongodb-community
+```
 
 ## Getting Started
 
@@ -34,7 +36,7 @@ Clone the repo and move into it:
 ```bash
 git clone https://github.com/BoweJordyn-FS/MuseFinder-PP3.git
 cd MuseFinder-PP3
-````
+```
 
 ### 1. Environment variables
 
