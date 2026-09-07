@@ -103,7 +103,7 @@ MuseFinder-PP3/
 
 - http://localhost:3000 | https://muse-finder-pp-3.vercel.app — the Next.js frontend, the primary user interface for MuseFinder
 - http://localhost:3001 | https://musefinder-pp3.onrender.com/ — the Express API
-- http://localhost:3001/spotify/v1/auth — account middleware for MuseFinder users
+- http://localhost:3001/spotify/v1/— account middleware for MuseFinder users
 
 ### Account endpoints (working)
 
