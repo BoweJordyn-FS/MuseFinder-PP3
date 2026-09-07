@@ -26,13 +26,17 @@ app.use(passport.initialize());
 require('./services/passport');
 
 // Routes
+// /api/v1 holds MuseFinder's own data (accounts, reviews, collections).
+// /spotify/v1 is reserved for the Spotify middleware layer.
 const authRoutes = require('./routes/auth');
+app.use('/api/v1/auth', authRoutes);
+
 app.use('/spotify/v1/auth', authRoutes);
 
-// The Next.js client runs on its own server, so anything that reaches here
-// is an unmatched API route
 app.use((req, res) => {
-	res.status(404).json({ error: `Not found: ${req.method} ${req.originalUrl}` });
+	res
+		.status(404)
+		.json({ error: `Not found: ${req.method} ${req.originalUrl}` });
 });
 
 app.listen(PORT, () => {
