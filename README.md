@@ -13,22 +13,6 @@ MuseFinder is a music discovery and review app built on the [Spotify Web API](ht
 - Chrome / Firefox / Safari / Edge >= latest 2 major versions
 - Homebrew >= v3.4.3 (macOS only, if you're installing MongoDB locally)
 
-## Other Considerations
-
-Ports `3000` and `3001` need to be free on the host machine. Check that nothing else is listening on them:
-
-```bash
-sudo lsof -nP -i4TCP:3000 | grep LISTEN && sudo lsof -nP -i4TCP:3001 | grep LISTEN
-```
-
-If either command prints a result, stop that process before continuing.
-
-MongoDB also has to be running before the backend will connect. On macOS with Homebrew:
-
-```bash
-brew services start mongodb-community
-```
-
 ## Getting Started
 
 Clone the repo and move into it:
@@ -103,19 +87,24 @@ MuseFinder-PP3/
 
 - http://localhost:3000 | https://muse-finder-pp-3.vercel.app — the Next.js frontend, the primary user interface for MuseFinder
 - http://localhost:3001 | https://musefinder-pp3.onrender.com/ — the Express API
-- http://localhost:3001/spotify/v1/— account middleware for MuseFinder users
+  The API is split into two namespaces:
+
+- `/api/v1` — MuseFinder's own data: accounts, reviews, and collections. None of it touches Spotify
+- `/spotify/v1` — the middleware layer that fronts the Spotify Web API
 
 ### Account endpoints (working)
 
-- `POST /spotify/v1/signup` — creates a user from an email and password. Returns a JWT and the new user id. Rejects duplicate emails with a `422`
-- `POST /spotify/v1/login` — authenticates an existing user through Passport's local strategy. Returns a JWT and user id
+- `POST /api/v1/auth/signup` — creates a user from an email and password. Returns a JWT and the new user id. Rejects duplicate emails with a `422`
+- `POST /api/v1/auth/login` — authenticates an existing user through Passport's local strategy. Returns a JWT and user id
 
 Protected routes read the token from an `Authorization: Bearer <token>` header.
+
+These are also still mounted at `/spotify/v1/auth/*` as a deprecated alias, so the deployed frontend keeps working during the migration. That alias will be removed.
 
 ### Spotify middleware (in progress)
 
 `server/routes/spotify.js` is scaffolded but not yet mounted. These are the planned endpoints:
 
 - `GET /spotify/v1/status` — returns `true` if the server currently holds a valid, unexpired Spotify token. `false` otherwise
-- `GET /spotify/v1/login` — requests a fresh app token from Spotify via the Client Credentials flow and caches it server-side
+- `GET /spotify/v1/login` — Endpoint request a new JWT from Spotify using the authentication workflow
 - `GET /spotify/v1/search` — takes a `?q=` query, calls Spotify's search endpoint with the cached token, and returns JSON for artists, albums, and tracks
