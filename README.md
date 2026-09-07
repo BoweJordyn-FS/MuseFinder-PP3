@@ -65,7 +65,7 @@ cd client
 npm run dev
 ```
 
-## Project Structure
+## Project Structure (So Far)
 
 ```
 MuseFinder-PP3/
@@ -79,7 +79,7 @@ MuseFinder-PP3/
     ├── controllers/        # Signup and login handlers, JWT issuing
     ├── middleware/         # requireAuth — Passport JWT guard for protected routes
     ├── models/             # Mongoose User schema, bcrypt password hashing
-    ├── routes/             # auth.js (live) and spotify.js (scaffolded)
+    ├── routes/             # auth.js  and spotify.js
     └── services/           # Passport local + JWT strategies
 ```
 
@@ -98,8 +98,6 @@ MuseFinder-PP3/
 - `POST /api/v1/auth/login` — authenticates an existing user through Passport's local strategy. Returns a JWT and user id
 
 Protected routes read the token from an `Authorization: Bearer <token>` header.
-
-These are also still mounted at `/spotify/v1/auth/*` as a deprecated alias, so the deployed frontend keeps working during the migration. That alias will be removed.
 
 ### Spotify middleware (in progress)
 
