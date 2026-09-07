@@ -101,14 +101,14 @@ MuseFinder-PP3/
 
 ## Links
 
-- http://localhost:3000 — the Next.js frontend, the primary user interface for MuseFinder
-- http://localhost:3001 — the Express API
+- http://localhost:3000 | https://muse-finder-pp-3.vercel.app — the Next.js frontend, the primary user interface for MuseFinder
+- http://localhost:3001 | https://musefinder-pp3.onrender.com/ — the Express API
 - http://localhost:3001/spotify/v1/auth — account middleware for MuseFinder users
 
 ### Account endpoints (working)
 
-- `POST /spotify/v1/auth/signup` — creates a user from an email and password. Returns a JWT and the new user id. Rejects duplicate emails with a `422`
-- `POST /spotify/v1/auth/login` — authenticates an existing user through Passport's local strategy. Returns a JWT and user id
+- `POST /spotify/v1/signup` — creates a user from an email and password. Returns a JWT and the new user id. Rejects duplicate emails with a `422`
+- `POST /spotify/v1/login` — authenticates an existing user through Passport's local strategy. Returns a JWT and user id
 
 Protected routes read the token from an `Authorization: Bearer <token>` header.
 

@@ -23,22 +23,22 @@ export default function Home() {
 					</form>
 
 					{/* <section className="p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10 grid grid-cols-3 gap-10">
-						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
 							<h2 className="text-xl font-bold self-center">New Release</h2>
 						</div>
-						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
 							<h2 className="text-xl font-bold self-center">New Release</h2>
 						</div>
-						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
 							<h2 className="text-xl font-bold self-center">New Release</h2>
 						</div>
-						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
 							<h2 className="text-xl font-bold self-center">New Release</h2>
 						</div>
-						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
 							<h2 className="text-xl font-bold self-center">New Release</h2>
 						</div>
-						<div className="flex justify-center border rounded-md border-white-300 w-80 h-80 m-4">
+						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
 							<h2 className="text-xl font-bold self-center">New Release</h2>
 						</div>
 					</section> */}
@@ -68,7 +68,7 @@ export default function Home() {
 										{Array.from({ length: 6 }).map((_, index) => (
 											<div
 												key={index}
-												className="flex justify-center border rounded-md border-white-300 w-80 h-80"
+												className="flex justify-center border rounded-md border-gray-300 w-80 h-80"
 											>
 												<p className="text-xl font-bold self-center">
 													Artist Name
@@ -102,7 +102,7 @@ export default function Home() {
 										{Array.from({ length: 6 }).map((_, index) => (
 											<div
 												key={index}
-												className="flex justify-center border rounded-md border-white-300 w-80 h-80"
+												className="flex justify-center border rounded-md border-gray-300 w-80 h-80"
 											>
 												<p className="text-xl font-bold self-center">
 													Album Name
@@ -136,7 +136,7 @@ export default function Home() {
 										{Array.from({ length: 6 }).map((_, index) => (
 											<div
 												key={index}
-												className="flex justify-center border rounded-md border-white-300 w-80 h-80"
+												className="flex justify-center border rounded-md border-gray-300 w-80 h-80"
 											>
 												<p className="text-xl font-bold self-center">
 													Song Name

@@ -4,10 +4,11 @@ import React from 'react';
 function Header() {
 	return (
 		<div>
-			<header className="flex flex-row m-6 justify-between items-center">
-				<div>
-					<h1 className="text-3xl font-bold">MuseFinder</h1>
-				</div>
+			<header className="flex flex-row m-10 justify-between items-center">
+				<h1 className="text-3xl font-bold flex flex-row items-center gap-2">
+					MuseFinder
+				</h1>
+
 				<div>
 					<Link
 						href="/"
@@ -20,6 +21,12 @@ function Header() {
 						className="text-xl font-bold ml-6"
 					>
 						Profile
+					</Link>
+					<Link
+						href="/playlists"
+						className="text-xl font-bold ml-6"
+					>
+						Playlists
 					</Link>
 				</div>
 			</header>
