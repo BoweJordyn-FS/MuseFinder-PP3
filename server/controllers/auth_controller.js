@@ -3,11 +3,12 @@ const jwt = require('jwt-simple');
 const config = require('../config');
 
 const tokenForUser = (user) => {
-	const timestamp = new Date().getTime();
+	const now = Math.floor(Date.now() / 1000);
 	return jwt.encode(
 		{
 			sub: user.id,
-			iat: timestamp,
+			iat: now,
+			exp: now + 60 * 60 * 24 * 7,
 		},
 		config.secret,
 	);

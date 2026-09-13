@@ -22,12 +22,12 @@ function Header() {
 					>
 						Profile
 					</Link>
-					<Link
+					{/* <Link
 						href="/playlists"
 						className="text-xl font-bold ml-6"
 					>
 						Playlists
-					</Link>
+					</Link> */}
 				</div>
 			</header>
 		</div>

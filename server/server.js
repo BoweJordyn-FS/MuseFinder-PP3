@@ -33,10 +33,29 @@ app.use('/api/v1/auth', authRoutes);
 
 app.use('/spotify/v1/auth', authRoutes);
 
+const spotifyRoutes = require('./routes/spotify');
+app.use('/spotify/v1', spotifyRoutes);
+
+const postRoutes = require('./routes/posts');
+app.use('/api/v1/posts', postRoutes);
+
+const playlistRoutes = require('./routes/playlists');
+app.use('/api/v1/playlists', playlistRoutes);
+
 app.use((req, res) => {
 	res
 		.status(404)
 		.json({ error: `Not found: ${req.method} ${req.originalUrl}` });
+});
+
+// Errors passed to next() land here as JSON instead of Express's HTML page.
+app.use((error, req, res, next) => {
+	// Mongoose schema violations and malformed ObjectIds are client errors.
+	if (error.name === 'ValidationError' || error.name === 'CastError') {
+		return res.status(400).json({ error: error.message });
+	}
+	console.error(error);
+	res.status(error.status || 500).json({ error: error.message });
 });
 
 app.listen(PORT, () => {

@@ -3,8 +3,17 @@ const bcrypt = require('bcryptjs');
 const validateEmail = (email) => {
 	return /^\S+@\S+\.\S+$/.test(email);
 };
-
+const validateUsername = async (username) => {
+	const count = await mongoose.models.User(countDocuments({ username: value }));
+	return count === 0;
+};
 const userSchema = new mongoose.Schema({
+	username: {
+		type: String,
+		unique: true,
+		required: 'Username is required',
+		validate: [],
+	},
 	email: {
 		type: String,
 		unique: true,
