@@ -3,16 +3,11 @@ const bcrypt = require('bcryptjs');
 const validateEmail = (email) => {
 	return /^\S+@\S+\.\S+$/.test(email);
 };
-const validateUsername = async (username) => {
-	const count = await mongoose.models.User(countDocuments({ username: value }));
-	return count === 0;
-};
 const userSchema = new mongoose.Schema({
 	username: {
 		type: String,
 		unique: true,
 		required: 'Username is required',
-		validate: [],
 	},
 	email: {
 		type: String,
@@ -36,17 +31,10 @@ userSchema.pre('save', async function () {
 		return;
 	}
 
-	const salt = await new Promise((resolve, reject) => {
-		bcrypt.genSalt(10, (error, salt) =>
-			error ? reject(error) : resolve(salt),
-		);
-	});
-	const hash = await new Promise((resolve, reject) => {
-		bcrypt.hash(user.password, salt, null, (error, hash) =>
-			error ? reject(error) : resolve(hash),
-		);
-	});
-	user.password = hash;
+	// bcryptjs's hash(password, rounds) generates the salt itself and
+	// returns a promise. (The old 4-argument form was bcrypt-nodejs's
+	// signature; under bcryptjs it silently produced an undefined hash.)
+	user.password = await bcrypt.hash(user.password, 10);
 });
 userSchema.methods.comparePassword = function (candidatePassword, callback) {
 	bcrypt.compare(candidatePassword, this.password, function (error, isMatch) {

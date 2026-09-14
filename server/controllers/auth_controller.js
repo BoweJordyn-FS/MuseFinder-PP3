@@ -18,20 +18,23 @@ exports.login = async (req, res, next) => {
 };
 
 exports.signup = async (req, res, next) => {
-	const { email, password } = req.body;
-	if (!email || !password) {
+	const { username, email, password } = req.body;
+	if (!username || !email || !password) {
 		return res
 			.status(422)
-			.json({ error: 'please provide your email and password' });
+			.json({ error: 'please provide a username, email and password' });
 	}
 
 	try {
-		const existingUser = await User.findOne({ email });
+		const existingUser = await User.findOne({
+			$or: [{ email }, { username }],
+		});
 		if (existingUser) {
-			return res.status(422).json({ error: 'Email already in use' });
+			const field = existingUser.email === email ? 'Email' : 'Username';
+			return res.status(422).json({ error: `${field} already in use` });
 		}
 
-		const user = new User({ email, password });
+		const user = new User({ username, email, password });
 		await user.save();
 
 		res.status(201).json({

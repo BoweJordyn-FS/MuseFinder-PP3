@@ -9,6 +9,10 @@ const requireAuth = require('../middleware/requireAuth');
 router.post('/signup', AuthController.signup);
 router.post('/login', requireLogin, AuthController.login);
 router.get('/me', requireAuth, (req, res) => {
-	res.json({ user_id: req.user._id, email: req.user.email });
+	res.json({
+		user_id: req.user._id,
+		username: req.user.username,
+		email: req.user.email,
+	});
 });
 module.exports = router;

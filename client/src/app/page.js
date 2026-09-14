@@ -7,7 +7,7 @@ export default function Home() {
 	return (
 		<div>
 			<main>
-				<Modal />
+				{/* <Modal /> */}
 				<div className="flex flex-col justify-center p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10">
 					<form className="mx-2 sm:mx-10 lg:mx-20">
 						<div className="relative">

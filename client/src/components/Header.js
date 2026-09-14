@@ -1,7 +1,11 @@
+'use client';
 import Link from 'next/link';
 import React from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 function Header() {
+	const { user, logout } = useAuth();
+
 	return (
 		<div>
 			<header className="flex flex-row m-10 justify-between items-center">
@@ -9,7 +13,7 @@ function Header() {
 					MuseFinder
 				</h1>
 
-				<div>
+				<div className="flex flex-row items-center">
 					<Link
 						href="/"
 						className="text-xl font-bold ml-6"
@@ -22,12 +26,14 @@ function Header() {
 					>
 						Profile
 					</Link>
-					{/* <Link
-						href="/playlists"
-						className="text-xl font-bold ml-6"
-					>
-						Playlists
-					</Link> */}
+					{user && (
+						<button
+							onClick={logout}
+							className="text-xl font-bold ml-6 hover:text-[#925FF0]"
+						>
+							Logout
+						</button>
+					)}
 				</div>
 			</header>
 		</div>

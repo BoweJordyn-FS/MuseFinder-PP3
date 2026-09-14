@@ -3,6 +3,7 @@ import { MantineProvider, mantineHtmlProps } from '@mantine/core';
 import Header from '@/components/Header';
 import '@mantine/core/styles.layer.css';
 import './globals.css';
+import { AuthProvider } from '@/context/AuthContext';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -28,8 +29,10 @@ export default function RootLayout({ children }) {
 		>
 			<body className="min-h-full flex flex-col">
 				<MantineProvider>
-					<Header />
-					<main>{children}</main>
+					<AuthProvider>
+						<Header />
+						<main>{children}</main>
+					</AuthProvider>
 				</MantineProvider>
 			</body>
 		</html>

@@ -31,8 +31,6 @@ require('./services/passport');
 const authRoutes = require('./routes/auth');
 app.use('/api/v1/auth', authRoutes);
 
-app.use('/spotify/v1/auth', authRoutes);
-
 const spotifyRoutes = require('./routes/spotify');
 app.use('/spotify/v1', spotifyRoutes);
 

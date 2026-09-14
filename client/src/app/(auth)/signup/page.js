@@ -5,36 +5,54 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { Eye, EyeSlash } from 'iconsax-react';
 
-function Login() {
-	const { login } = useAuth();
+function Signup() {
+	const { signup } = useAuth();
 	const router = useRouter();
+	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState(null);
 
-	const handleLogin = async (e) => {
+	const handleSignup = async (e) => {
 		e.preventDefault();
 		setIsSubmitting(true);
 		setError(null);
 		try {
-			await login(email, password);
+			await signup(username, email, password);
 			router.push('/');
 		} catch (err) {
-			setError(err.response?.data?.error || 'Login failed');
+			setError(err.response?.data?.error || 'Signup failed');
 			setIsSubmitting(false);
 		}
 	};
 
 	return (
 		<main className="flex flex-col justify-center h-full p-10">
-			<h1 className="text-3xl font-bold text-black ml-20">Login</h1>
+			<h1 className="text-3xl font-bold text-black ml-20">Sign Up</h1>
 			<div className="self-center">
 				<form
 					className="text-black w-md"
-					onSubmit={handleLogin}
+					onSubmit={handleSignup}
 				>
+					<div className="relative mt-6">
+						<input
+							id="username"
+							type="text"
+							className="float-input"
+							placeholder="Username"
+							value={username}
+							onChange={(e) => setUsername(e.target.value)}
+							required
+						/>
+						<label
+							htmlFor="username"
+							className="float-label"
+						>
+							Username
+						</label>
+					</div>
 					<div className="relative mt-6">
 						<input
 							id="email"
@@ -62,7 +80,6 @@ function Login() {
 							onChange={(e) => setPassword(e.target.value)}
 							required
 						/>
-
 						<label
 							htmlFor="password"
 							className="float-label"
@@ -79,13 +96,11 @@ function Login() {
 								<EyeSlash
 									size={22}
 									color="currentColor"
-									variant="Broken"
 								/>
 							) : (
 								<Eye
 									size={22}
 									color="currentColor"
-									variant="Broken"
 								/>
 							)}
 						</button>
@@ -96,15 +111,15 @@ function Login() {
 						disabled={isSubmitting}
 						className="bg-black rounded-full p-2 text-white w-full mt-6 hover:bg-[#925FF0] disabled:opacity-50"
 					>
-						{isSubmitting ? 'Logging in…' : 'Login'}
+						{isSubmitting ? 'Creating account…' : 'Signup'}
 					</button>
 				</form>
 				<div className="text-black mt-5 text-center">
 					<Link
-						href="/signup"
+						href="/login"
 						className="hover:text-[#925FF0]"
 					>
-						Don&apos;t have an account? Create one!
+						Already have an account? Login!
 					</Link>
 				</div>
 			</div>
@@ -112,4 +127,4 @@ function Login() {
 	);
 }
 
-export default Login;
+export default Signup;
