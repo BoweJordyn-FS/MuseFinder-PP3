@@ -24,7 +24,7 @@ cd MuseFinder-PP3
 
 ### 1. Environment variables
 
-The backend reads its configuration from a `.env` file. Copy the template and fill it in:
+**Backend.** Copy the template and fill it in:
 
 ```bash
 cp server/.env.dist server/.env && vim server/.env
@@ -35,8 +35,18 @@ cp server/.env.dist server/.env && vim server/.env
 - `JWT_SECRET` — secret used to sign MuseFinder account tokens. **Required**; the server refuses to boot without it
 - `SPOTIFY_CLIENT_ID` — from your Spotify Developer dashboard
 - `SPOTIFY_CLIENT_SECRET` — from the same dashboard. Server-side only, never exposed to the client
+- `SPOTIFY_REDIRECT_URI` — where Spotify sends the browser after login. Defaults to `http://127.0.0.1:3001/spotify/v1/callback`
+- `CLIENT_URL` — where the backend sends the browser once Spotify tokens are stored. Defaults to `http://localhost:3000`
 
 There is intentionally no fallback for `JWT_SECRET`. A committed default would let anyone forge a token.
+
+**Frontend.** Create `client/.env.local` with the backend's address:
+
+```bash
+echo "NEXT_PUBLIC_API_URL=http://localhost:3001" > client/.env.local
+```
+
+**Spotify dashboard.** The redirect URI must be registered on your app under _Settings → Redirect URIs_, character for character. Spotify requires HTTPS except for the loopback address, so use `http://127.0.0.1:3001/spotify/v1/callback` for local development — `localhost` is rejected. Add the deployed `https://…/spotify/v1/callback` URL alongside it.
 
 ### 2. Install dependencies
 
@@ -65,44 +75,49 @@ cd client
 npm run dev
 ```
 
-## Project Structure (So Far)
+## Project Structure
 
 ```
 MuseFinder-PP3/
-├── client/                 # Next.js 16 App Router frontend
+├── client/                    # Next.js 16 App Router frontend
 │   └── src/
-│       ├── app/            # Routes: / (search + discover), /results, /profile
-│       ├── components/     # Shared UI, e.g. Header
-│       └── app/globals.css # Tailwind v4 entry point
-└── server/                 # Express 5 API
-    ├── config.js           # Reads and validates JWT_SECRET
-    ├── controllers/        # Signup and login handlers, JWT issuing
-    ├── middleware/         # requireAuth — Passport JWT guard for protected routes
-    ├── models/             # Mongoose User schema, bcrypt password hashing
-    ├── routes/             # auth.js  and spotify.js
-    └── services/           # Passport local + JWT strategies
+│       ├── app/               # Routes: /, /results, /profile, /playlists, /login, /signup
+│       ├── components/        # Shared UI: Header, PostCard, Modal
+│       ├── context/           # AuthContext — session state, login/signup/logout
+│       ├── lib/api.js         # One axios instance; attaches the JWT to every request
+│       └── services/          # auth.js, spotify.js, posts.js — one file per backend resource
+└── server/                    # Express 5 API
+    ├── config.js              # Reads and validates JWT_SECRET
+    ├── controllers/           # Signup and login handlers, JWT issuing
+    ├── middleware/            # requireAuth — Passport JWT guard for protected routes
+    ├── models/                # User, Post, Playlist, SpotifyToken
+    ├── routes/                # auth, posts, playlists, spotify
+    └── services/              # passport.js (local + JWT strategies), spotify.js (app token + search)
 ```
 
 ## Links
 
 - http://localhost:3000 | https://muse-finder-pp-3.vercel.app — the Next.js frontend, the primary user interface for MuseFinder
-- http://localhost:3001 | https://musefinder-pp3.onrender.com/ — the Express API
-  The API is split into two namespaces:
+- http://localhost:3001 | https://musefinder-pp3.onrender.com — the Express API
 
-- `/api/v1` — MuseFinder's own data: accounts, reviews, and collections. None of it touches Spotify
+The API is split into two namespaces:
+
+- `/api/v1` — MuseFinder's own data: accounts, reviews, and playlists. None of it touches Spotify
 - `/spotify/v1` — the middleware layer that fronts the Spotify Web API
 
-### Account endpoints (working)
+Routes marked 🔒 require an `Authorization: Bearer <token>` header carrying a MuseFinder account JWT.
 
-- `POST /api/v1/auth/signup` — creates a user from an email and password. Returns a JWT and the new user id. Rejects duplicate emails with a `422`
-- `POST /api/v1/auth/login` — authenticates an existing user through Passport's local strategy. Returns a JWT and user id
+### Accounts — `/api/v1/auth`
 
-Protected routes read the token from an `Authorization: Bearer <token>` header.
+- `POST /signup` — creates a user from a username, email and password. Returns a JWT (valid 7 days) and the user id. `422` on a duplicate username or email
+- `POST /login` — authenticates with email and password. Returns a JWT and user id
+- `GET /me` 🔒 — returns the signed-in user's id, username and email. The frontend calls this on page load to restore the session
 
-### Spotify middleware (in progress)
+### Spotify — `/spotify/v1`
 
-`server/routes/spotify.js` is scaffolded but not yet mounted. These are the planned endpoints:
+**Authorization Code flow.** The backend authenticates with Spotify on the user's behalf and stores the resulting tokens in MongoDB (`SpotifyToken` collection).
 
-- `GET /spotify/v1/status` — returns `true` if the server currently holds a valid, unexpired Spotify token. `false` otherwise
-- `GET /spotify/v1/login` — Endpoint request a new JWT from Spotify using the authentication workflow
-- `GET /spotify/v1/search` — takes a `?q=` query, calls Spotify's search endpoint with the cached token, and returns JSON for artists, albums, and tracks
+- `GET /login` — redirects the browser to Spotify's consent screen
+- `GET /callback` — Spotify sends the browser back here. Verifies `state`, exchanges the code for tokens, saves them, redirects to `CLIENT_URL`
+- `GET /refresh_token` — uses the stored refresh token to get a new access token. Access tokens expire after one hour
+- `GET /status` — `{ status: true }` if a valid, unexpired token is stored in the database
