@@ -31,9 +31,6 @@ userSchema.pre('save', async function () {
 		return;
 	}
 
-	// bcryptjs's hash(password, rounds) generates the salt itself and
-	// returns a promise. (The old 4-argument form was bcrypt-nodejs's
-	// signature; under bcryptjs it silently produced an undefined hash.)
 	user.password = await bcrypt.hash(user.password, 10);
 });
 userSchema.methods.comparePassword = function (candidatePassword, callback) {

@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 
-// The Spotify entity a review is about. Fields are a snapshot of what
-// /spotify/v1/search returns, so a post can render without a second
-// Spotify call. spotify_id is the stable key for "all reviews of X".
 const SubjectSchema = new mongoose.Schema(
 	{
 		spotify_id: { type: String, required: true },
@@ -52,7 +49,6 @@ const PostSchema = new mongoose.Schema(
 	{ timestamps: true },
 );
 
-// Hottest query: every review of a given artist/album/track, newest first.
 PostSchema.index({ 'subject.spotify_id': 1, 'subject.type': 1, createdAt: -1 });
 
 module.exports = mongoose.model('Post', PostSchema);

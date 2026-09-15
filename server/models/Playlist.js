@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 
-// A user-curated collection of their own reviews. Posts are referenced,
-// not embedded: a review exists on its own and can sit in several
-// playlists at once. Array order doubles as display order.
 const PlaylistSchema = new mongoose.Schema(
 	{
 		owner: {

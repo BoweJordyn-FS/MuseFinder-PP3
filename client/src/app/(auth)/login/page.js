@@ -22,7 +22,7 @@ function Login() {
 			await login(email, password);
 			router.push('/');
 		} catch (err) {
-			setError(err.response?.data?.error || 'Login failed');
+			setError(err.response?.data?.error || err.message || 'Login failed');
 			setIsSubmitting(false);
 		}
 	};

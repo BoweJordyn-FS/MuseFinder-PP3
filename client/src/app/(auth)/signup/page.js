@@ -23,7 +23,7 @@ function Signup() {
 			await signup(username, email, password);
 			router.push('/');
 		} catch (err) {
-			setError(err.response?.data?.error || 'Signup failed');
+			setError(err.response?.data?.error || err.message || 'Signup failed');
 			setIsSubmitting(false);
 		}
 	};
