@@ -119,16 +119,20 @@ router.get('/token', async (req, res, next) => {
 	}
 });
 
-// GET /search?q=radiohead
+// GET /search?q=${params}
 router.get('/search', async (req, res, next) => {
-	if (!req.query.q) {
-		return res.status(400).json({ error: 'q is required' });
-	}
-	try {
-		res.json(await spotify.search(req.query.q));
-	} catch (error) {
-		next(error);
-	}
+	const params = new URLSearchParams({
+		q: req.query.q,
+		type: 'album,track,artist',
+		limit: 20,
+	});
+
+	const response = await fetch(`https://api.spotify.com/v1/search?${params}`, {
+		headers: { Authorization: `Bearer ${accessToken}` },
+	});
+
+	const data = await response.json();
+	res.json(data);
 });
 
 module.exports = router;

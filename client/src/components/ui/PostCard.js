@@ -37,7 +37,7 @@ function PostCard() {
           id="pc-header"
           className="flex flex-row gap-1 space-x-1.5 content-center"
         >
-          <p className="text-md font-extralight">
+          <p className="text-base font-extralight">
             {" "}
             @username ·{" "}
             {/* <span className="text-gray-500 text-[4px] font-extralight italic">

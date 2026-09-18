@@ -15,18 +15,18 @@ function Signup() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState(null);
 
-	const handleSignup = async (e) => {
-		e.preventDefault();
-		setIsSubmitting(true);
-		setError(null);
-		try {
-			await signup(username, email, password);
-			router.push('/');
-		} catch (err) {
-			setError(err.response?.data?.error || err.message || 'Signup failed');
-			setIsSubmitting(false);
-		}
-	};
+	// const handleSignup = async (e) => {
+	// 	e.preventDefault();
+	// 	setIsSubmitting(true);
+	// 	setError(null);
+	// 	try {
+	// 		await signup(username, email, password);
+	// 		router.push('/');
+	// 	} catch (err) {
+	// 		setError(err.response?.data?.error || err.message || 'Signup failed');
+	// 		setIsSubmitting(false);
+	// 	}
+	// };
 
 	return (
 		<main className="flex flex-col justify-center h-full p-10">
@@ -34,7 +34,7 @@ function Signup() {
 			<div className="self-center">
 				<form
 					className="text-black w-md"
-					onSubmit={handleSignup}
+					// onSubmit={handleSignup}
 				>
 					<div className="relative mt-6">
 						<input

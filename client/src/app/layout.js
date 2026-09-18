@@ -31,7 +31,9 @@ export default function RootLayout({ children }) {
 				<MantineProvider>
 					<AuthProvider>
 						<Header />
-						<main>{children}</main>
+						{/* Pages render their own <main>; this is just the growth area
+						    that makes the body's flex column fill the viewport. */}
+						<div className="flex-1">{children}</div>
 					</AuthProvider>
 				</MantineProvider>
 			</body>
