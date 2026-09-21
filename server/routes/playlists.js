@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Playlist = require('../models/Playlist');
+const Post = require('../models/Post');
 const requireAuth = require('../middleware/requireAuth');
 
 const pick = (source, keys) =>
@@ -8,11 +9,10 @@ const pick = (source, keys) =>
 		keys.filter((k) => k in source).map((k) => [k, source[k]]),
 	);
 
-// Every playlist route is owner-only, so all of them share this guard.
+// every playlist route needs a login
 router.use(requireAuth);
 
-// Loads the playlist and enforces ownership. Everything below /:id relies
-// on req.playlist being set here.
+// load the playlist and make sure it's yours
 const loadOwnPlaylist = async (req, res, next) => {
 	try {
 		const playlist = await Playlist.findById(req.params.id);
@@ -27,8 +27,7 @@ const loadOwnPlaylist = async (req, res, next) => {
 	}
 };
 
-// GET / — the signed-in user's playlists, with post counts rather than the
-// full post arrays: a list view doesn't need every review body.
+// GET — my playlists with post counts
 router.get('/', async (req, res, next) => {
 	try {
 		const playlists = await Playlist.find({ owner: req.user._id })
@@ -45,7 +44,7 @@ router.get('/', async (req, res, next) => {
 	}
 });
 
-// GET /:id — one playlist with its posts filled in
+// GET — single playlist with posts populated
 router.get('/:id', loadOwnPlaylist, async (req, res, next) => {
 	try {
 		await req.playlist.populate({
@@ -58,7 +57,7 @@ router.get('/:id', loadOwnPlaylist, async (req, res, next) => {
 	}
 });
 
-// POST / — create
+// POST — create a playlist
 router.post('/', async (req, res, next) => {
 	try {
 		const playlist = new Playlist({
@@ -72,7 +71,7 @@ router.post('/', async (req, res, next) => {
 	}
 });
 
-// PATCH /:id — rename / edit description
+// PATCH — rename / edit description
 router.patch('/:id', loadOwnPlaylist, async (req, res, next) => {
 	try {
 		Object.assign(req.playlist, pick(req.body, ['name', 'description']));
@@ -83,7 +82,7 @@ router.patch('/:id', loadOwnPlaylist, async (req, res, next) => {
 	}
 });
 
-// DELETE /:id — the posts inside are untouched; they exist independently.
+// DELETE — delete the playlist, posts are untouched
 router.delete('/:id', loadOwnPlaylist, async (req, res, next) => {
 	try {
 		await req.playlist.deleteOne();
@@ -93,8 +92,7 @@ router.delete('/:id', loadOwnPlaylist, async (req, res, next) => {
 	}
 });
 
-// POST /:id/posts — add one of the user's OWN posts. Two checks: the
-// playlist is yours (loadOwnPlaylist) and the post is yours (here).
+// POST — add one of your own posts to the playlist
 router.post('/:id/posts', loadOwnPlaylist, async (req, res, next) => {
 	try {
 		const { postId } = req.body;
@@ -119,7 +117,7 @@ router.post('/:id/posts', loadOwnPlaylist, async (req, res, next) => {
 	}
 });
 
-// DELETE /:id/posts/:postId — remove from the playlist only
+// DELETE — remove a post from the playlist
 router.delete('/:id/posts/:postId', loadOwnPlaylist, async (req, res, next) => {
 	try {
 		const before = req.playlist.posts.length;

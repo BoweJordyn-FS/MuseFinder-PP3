@@ -10,14 +10,14 @@ import { search } from '@/services/spotify';
 
 export default function Home() {
 	const [query, setQuery] = useState('');
-	// Only updated on submit, so the query below doesn't fire per keystroke.
 	const [submitted, setSubmitted] = useState('');
 	const show = Boolean(submitted);
 
-	// results = { artists, albums, tracks }, each with an `items` array.
-	// Keyed on the submitted text, so re-searching the same thing is a
-	// cache hit, and SearchResults can share this data by using the same key.
-	const { data: results, isPending, error } = useQuery({
+	const {
+		data: results,
+		isPending,
+		error,
+	} = useQuery({
 		queryKey: ['search', submitted],
 		queryFn: () => search(submitted),
 		enabled: show,

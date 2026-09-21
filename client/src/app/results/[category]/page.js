@@ -1,9 +1,11 @@
 'use client';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import { useParams, useSearchParams, notFound } from 'next/navigation';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { search, CATEGORIES } from '@/services/spotify';
 import ResultCard from '@/components/ui/ResultCard';
+import { ArrowCircleLeft } from 'iconsax-react';
 
 function CategoryInner() {
 	const { category } = useParams();
@@ -11,35 +13,30 @@ function CategoryInner() {
 	const type = CATEGORIES[category];
 	if (!type) notFound();
 
-	const [items, setItems] = useState([]);
-	const [total, setTotal] = useState(0);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
+	const {
+		data,
+		isPending,
+		error,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useInfiniteQuery({
+		queryKey: ['search', q, type],
+		queryFn: ({ pageParam }) => search(q, { type, offset: pageParam }),
+		initialPageParam: 0,
 
-	const load = async (offset) => {
-		setLoading(true);
-		setError(null);
-		try {
-			const data = await search(q, { type, offset });
-			const page = data[category];
-			setItems((prev) =>
-				offset === 0 ? page.items : [...prev, ...page.items],
-			);
-			setTotal(page.total);
-		} catch (err) {
-			setError(err.response?.data?.error || err.message);
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	useEffect(() => {
-		if (q) load(0);
-	}, [q, type]);
+		getNextPageParam: (lastPage) => {
+			const page = lastPage[category];
+			if (!page.next || page.items.length === 0) return undefined;
+			return page.offset + page.items.length;
+		},
+		enabled: Boolean(q),
+	});
 
 	if (!q)
 		return <p className="p-10 text-gray-500">Search for something first.</p>;
 
+	const items = data?.pages.flatMap((page) => page[category].items) ?? [];
 	const title = category[0].toUpperCase() + category.slice(1);
 
 	return (
@@ -50,15 +47,26 @@ function CategoryInner() {
 				</h2>
 				<Link
 					href={`/results?q=${encodeURIComponent(q)}`}
-					className="text-[#925FF0] hover:underline"
+					className="text-[#925FF0] hover:underline flex flex-row items-center gap-2"
 				>
-					← All results
+					<ArrowCircleLeft
+						variant="broken"
+						size={18}
+						color="#925FF0"
+					/>{' '}
+					All results
 				</Link>
 			</div>
 
-			{error && <p className="text-red-600 mb-6">{error}</p>}
+			{error && (
+				<p className="text-red-600 mb-6">
+					{error.response?.data?.error || error.message}
+				</p>
+			)}
 
-			<div className="flex flex-wrap gap-6">
+			{isPending && <p className="text-gray-500">Searching…</p>}
+
+			<div className="flex flex-wrap gap-6 justify-center">
 				{items.map((item) => (
 					<ResultCard
 						key={item.id}
@@ -67,17 +75,17 @@ function CategoryInner() {
 				))}
 			</div>
 
-			{!loading && items.length === 0 && !error && (
+			{!isPending && items.length === 0 && !error && (
 				<p className="text-gray-500">No {category} found.</p>
 			)}
 
-			{items.length < total && (
+			{hasNextPage && (
 				<button
-					onClick={() => load(items.length)}
-					disabled={loading}
+					onClick={() => fetchNextPage()}
+					disabled={isFetchingNextPage}
 					className="mt-10 bg-black rounded-full px-8 py-2 text-white hover:bg-[#925FF0] disabled:opacity-50"
 				>
-					{loading ? 'Loading…' : 'Load more'}
+					{isFetchingNextPage ? 'Loading…' : 'Load more'}
 				</button>
 			)}
 		</section>

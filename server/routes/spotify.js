@@ -15,7 +15,7 @@ const client_url = process.env.CLIENT_URL || 'http://localhost:3000';
 
 let pendingState = null;
 
-// Save (or replace) the one token document.
+// only ever one token doc, overwrite it
 const saveToken = async (data) => {
 	await SpotifyToken.findOneAndUpdate(
 		{},
@@ -43,8 +43,7 @@ router.get('/login', (req, res) => {
 	res.redirect('https://accounts.spotify.com/authorize?' + params);
 });
 
-// Spotify sends the browser back here with a code. Swap the code
-// for tokens, store them in the database, then go back to the frontend.
+// spotify sends the browser back here with a code, swap it for tokens and save
 router.get('/callback', async (req, res, next) => {
 	const { code, state } = req.query;
 	if (!state || state !== pendingState) {
@@ -98,7 +97,7 @@ router.get('/refresh_token', async (req, res, next) => {
 	}
 });
 
-// Is there a valid, unexpired token stored in the database?
+// is there a valid token in the db
 router.get('/status', async (req, res, next) => {
 	try {
 		const stored = await SpotifyToken.findOne();
@@ -119,8 +118,8 @@ router.get('/token', async (req, res, next) => {
 	}
 });
 
-// GET /search?q=radiohead                          all three types, 10 each
-// GET /search?q=radiohead&type=artist&offset=10    one type, next page
+// GET /search?q=radiohead — all three types
+// GET /search?q=radiohead&type=artist&offset=10 — one type, next page
 router.get('/search', async (req, res, next) => {
 	const { q, type, limit, offset } = req.query;
 	if (!q) {

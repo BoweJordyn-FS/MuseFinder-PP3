@@ -24,8 +24,11 @@ function relativeTime(iso, fallback) {
   });
 }
 
-function PostCard() {
+// post: { _id, author: { username }, content, rating, subject: { name,
+// artist, image_url }, createdAt } — the shape GET /api/v1/posts returns.
+function PostCard({ post }) {
   const [editing, setEditing] = useState(false);
+  const { author, subject, rating, content, createdAt } = post;
   return (
     <div
       id="post-card"
@@ -38,35 +41,37 @@ function PostCard() {
           className="flex flex-row gap-1 space-x-1.5 content-center"
         >
           <p className="text-base font-extralight">
-            {" "}
-            @username ·{" "}
-            {/* <span className="text-gray-500 text-[4px] font-extralight italic">
-											{relativeTime(post.created_at_iso, post.created_at)}
-										</span> */}
+            @{author?.username ?? "unknown"} ·{" "}
+            <span className="text-gray-500 text-sm font-extralight italic">
+              {relativeTime(createdAt)}
+            </span>
           </p>
         </div>
         <div className="flex flex-row gap-4 mt-3 items-start">
           <div>
-            <div className="w-50 h-50 rounded-lg object-cover shrink-0 bg-white"></div>
+            {subject?.image_url ? (
+              <img
+                src={subject.image_url}
+                alt={subject.name}
+                className="w-50 h-50 rounded-lg object-cover shrink-0"
+              />
+            ) : (
+              <div className="w-50 h-50 rounded-lg shrink-0 bg-white" />
+            )}
           </div>
           <div className="flex flex-col flex-1 min-w-0 gap-0.5">
             <h4 className="text-2xl font-medium text-white leading-tight">
-              title
+              {subject?.name}
             </h4>
-            <h5 className="text-xl text-gray-400 font-light">artist name</h5>
+            <h5 className="text-xl text-gray-400 font-light">{subject?.artist}</h5>
             <Rating
               readOnly // {!editing}
               count={5}
+              value={rating ?? 0}
               emptySymbol={<Star1 size={20} variant="Broken" color="#925EF0" />}
               fullSymbol={<Star1 size={20} variant="Bold" color="#925EF0" />}
             />
-            <p className="mt-1">
-              Pariatur ex dolore excepteur nulla. Nulla eu deserunt duis eu
-              aliqua duis esse officia mollit cupidatat veniam incididunt sunt
-              elit. Minim consectetur pariatur sit deserunt mollit. Do quis
-              eiusmod quis exercitation labore eiusmod fugiat dolor eiusmod
-              labore amet.
-            </p>
+            <p className="mt-1 whitespace-pre-wrap">{content}</p>
           </div>
         </div>
       </div>

@@ -2,10 +2,9 @@
 import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-// The QueryClient is a class instance, so it can't be created in the server
-// component layout and passed down. This client component owns it instead.
+// query client has to be made in a client component, not the layout
 export function QueryProvider({ children }) {
-	// useState so one client is created per app, not one per render.
+	// useState so it's only created once
 	const [queryClient] = useState(
 		() =>
 			new QueryClient({

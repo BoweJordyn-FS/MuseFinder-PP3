@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import * as motion from 'motion/react-client';
 import { Group, Scroller } from '@mantine/core';
 import { BsSoundwave } from 'react-icons/bs';
+import { ArrowCircleRight } from 'iconsax-react';
 import { search } from '@/services/spotify';
 import ResultCard from '@/components/ui/ResultCard';
 
@@ -15,9 +16,12 @@ const ROWS = [
 ];
 
 function SearchResults({ q }) {
-	// Same key as the home page's query, so this is a cache read, not a
-	// second request.
-	const { data: results, isPending, error } = useQuery({
+	// same key as the home page so this hits the cache
+	const {
+		data: results,
+		isPending,
+		error,
+	} = useQuery({
 		queryKey: ['search', q],
 		queryFn: () => search(q),
 		enabled: Boolean(q),
@@ -46,9 +50,14 @@ function SearchResults({ q }) {
 						<div className="border-b-2 border-[#925FF0] mb-10">
 							<Link
 								href={`/results/${key}?q=${encodeURIComponent(q)}`}
-								className="text-3xl font-bold text-[#925FF0] hover:underline"
+								className="text-3xl font-bold text-[#925FF0] hover:underline flex flex-row gap-2 items-center"
 							>
-								{title} →
+								{title}{' '}
+								<ArrowCircleRight
+									variant="broken"
+									size={24}
+									color="#925FF0"
+								/>
 							</Link>
 						</div>
 						{results[key].items.length === 0 ? (

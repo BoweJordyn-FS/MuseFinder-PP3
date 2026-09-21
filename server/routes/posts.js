@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const Post = require('../models/Post');
+const Playlist = require('../models/Playlist');
 const requireAuth = require('../middleware/requireAuth');
 
 const AUTHOR_FIELDS = 'username email';
 
-// Only these fields may come from the client. `author` is always taken from
-// the verified token, never the body.
+// only these can come from the client, author always comes from the token
 const SUBJECT_FIELDS = [
 	'spotify_id',
 	'type',
@@ -20,10 +21,7 @@ const pick = (source, keys) =>
 		keys.filter((k) => k in source).map((k) => [k, source[k]]),
 	);
 
-// GET / — list posts, newest first.
-//   ?subjectId=&subjectType=  every review of one artist/album/track
-//   ?author=                  one user's posts (fills the profile page)
-//   ?limit=&page=             pagination, defaults 20 / 1
+// GET — all posts newest first. filter with ?subjectId&subjectType or ?author, page with ?limit&page
 router.get('/', async (req, res, next) => {
 	try {
 		const { subjectId, subjectType, author } = req.query;
@@ -50,7 +48,7 @@ router.get('/', async (req, res, next) => {
 	}
 });
 
-// GET /:id — single post
+// GET — single post
 router.get('/:id', async (req, res, next) => {
 	try {
 		const post = await Post.findById(req.params.id).populate(
@@ -64,7 +62,7 @@ router.get('/:id', async (req, res, next) => {
 	}
 });
 
-// POST / — create. Schema validation enforces rating/subject for reviews.
+// POST — create a post
 router.post('/', requireAuth, async (req, res, next) => {
 	try {
 		const { type, content, rating, subject } = req.body;
@@ -83,8 +81,7 @@ router.post('/', requireAuth, async (req, res, next) => {
 	}
 });
 
-// PATCH /:id — edit content or rating. Author only. The subject is fixed:
-// a review of one album can't be turned into a review of another.
+// PATCH — edit content or rating, author only
 router.patch('/:id', requireAuth, async (req, res, next) => {
 	try {
 		const post = await Post.findById(req.params.id);
@@ -103,8 +100,7 @@ router.patch('/:id', requireAuth, async (req, res, next) => {
 	}
 });
 
-// DELETE /:id — author only. Also removes the post from every playlist that
-// references it so populate() never returns dangling nulls.
+// DELETE — author only, also pulls it out of any playlists
 router.delete('/:id', requireAuth, async (req, res, next) => {
 	try {
 		const post = await Post.findById(req.params.id);

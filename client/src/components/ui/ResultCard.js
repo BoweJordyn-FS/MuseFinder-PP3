@@ -1,4 +1,7 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import Modal from './Modal';
 
 const describe = (item) => {
 	const images = item.images ?? item.album?.images ?? [];
@@ -15,8 +18,16 @@ const describe = (item) => {
 
 function ResultCard({ item }) {
 	const { image, name, subtitle } = describe(item);
-	return (
-		<div className="flex flex-col w-60 shrink-0">
+	const [open, setOpen] = useState(false);
+	// only albums and tracks can be reviewed
+	const reviewable = item.type === 'album' || item.type === 'track';
+	const spotifyUrl = item.external_urls?.spotify;
+	const card = (
+		<motion.div
+			className={`flex flex-col w-60 shrink-0 ${reviewable ? 'cursor-pointer' : ''}`}
+			whileHover={reviewable ? { y: -4 } : undefined}
+			onClick={reviewable ? () => setOpen(true) : undefined}
+		>
 			<div className="w-60 h-60 rounded-md overflow-hidden border border-gray-300 bg-white">
 				{image ? (
 					<img
@@ -32,7 +43,32 @@ function ResultCard({ item }) {
 			</div>
 			<p className="mt-2 font-bold truncate">{name}</p>
 			<p className="text-sm text-gray-500 truncate">{subtitle}</p>
-		</div>
+		</motion.div>
+	);
+	return (
+		<>
+			{reviewable ? (
+				<div onClick={() => setOpen(true)}>{card}</div>
+			) : (
+				<a
+					href={spotifyUrl}
+					target="_blank"
+					rel="noreferrer"
+				>
+					{card}
+				</a>
+			)}
+
+			{/* AnimatePresence out here so the close animation works */}
+			<AnimatePresence>
+				{open && (
+					<Modal
+						item={item}
+						onClose={() => setOpen(false)}
+					/>
+				)}
+			</AnimatePresence>
+		</>
 	);
 }
 

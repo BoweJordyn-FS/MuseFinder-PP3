@@ -1,18 +1,28 @@
 'use client';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Tabs } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
 import PostCard from '@/components/ui/PostCard';
 import { useAuth } from '@/context/AuthContext';
+import { getPostsByUser } from '@/services/posts';
 import '@mantine/core/styles/Tabs.css';
+import Login from '../(auth)/login/page';
 
 function Profile() {
 	const { user, loading } = useAuth();
 	const router = useRouter();
 
-	// AUTH GUARD DISABLED for layout work — re-enable before shipping.
-	// Wait for /me before deciding: until then `user` is null even for
-	// someone who is logged in.
+	// my posts, refetches after the modal posts a new one
+	const { data, isPending, error } = useQuery({
+		queryKey: ['posts', { author: user?.user_id }],
+		queryFn: () => getPostsByUser(user.user_id),
+		enabled: Boolean(user),
+	});
+	const posts = data?.posts ?? [];
+
+	// auth guard off while I work on the layout, turn back on later
 	// useEffect(() => {
 	//   if (!loading && !user) router.replace("/login");
 	// }, [loading, user, router]);
@@ -90,8 +100,33 @@ function Profile() {
 						value="profile"
 						className="flex flex-col gap-6"
 					>
-						{Array.from({ length: 6 }).map((_, index) => (
-							<PostCard key={index} />
+						{!user && !loading && (
+							<p className="text-gray-500">
+								<Link
+									href="/login"
+									className="text-[#925FF0] hover:underline"
+								>
+									Log in
+								</Link>{' '}
+								to see your reviews.
+							</p>
+						)}
+						{user && isPending && <p className="text-gray-500">Loading…</p>}
+						{error && (
+							<p className="text-red-500">
+								{error.response?.data?.error || error.message}
+							</p>
+						)}
+						{user && !isPending && posts.length === 0 && (
+							<p className="text-gray-500">
+								No reviews yet. Search for an album or track to write one.
+							</p>
+						)}
+						{posts.map((post) => (
+							<PostCard
+								key={post._id}
+								post={post}
+							/>
 						))}
 					</Tabs.Panel>
 

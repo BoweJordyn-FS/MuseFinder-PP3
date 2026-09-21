@@ -26,8 +26,7 @@ app.use(passport.initialize());
 require('./services/passport');
 
 // Routes
-// /api/v1 holds MuseFinder's own data (accounts, reviews, collections).
-// /spotify/v1 is reserved for the Spotify middleware layer.
+// /api/v1 is our stuff, /spotify/v1 is the spotify middleware
 const authRoutes = require('./routes/auth');
 app.use('/api/v1/auth', authRoutes);
 
@@ -46,9 +45,9 @@ app.use((req, res) => {
 		.json({ error: `Not found: ${req.method} ${req.originalUrl}` });
 });
 
-// Errors passed to next() land here as JSON instead of Express's HTML page.
+// error handler, sends json instead of the express html page
 app.use((error, req, res, next) => {
-	// Mongoose schema violations and malformed ObjectIds are client errors.
+	// bad input from the client
 	if (error.name === 'ValidationError' || error.name === 'CastError') {
 		return res.status(400).json({ error: error.message });
 	}
