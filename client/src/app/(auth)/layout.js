@@ -10,7 +10,7 @@ export default function AuthLayout({ children }) {
 				className="w-full h-screen object-cover"
 				loading="eager"
 			/>
-			<div className="flex flex-col bg-white">\{children}</div>
+			<div className="flex flex-col bg-white">{children}</div>
 		</div>
 	);
 }

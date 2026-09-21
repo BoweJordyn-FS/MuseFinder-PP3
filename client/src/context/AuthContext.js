@@ -17,14 +17,15 @@ export function AuthProvider({ children }) {
 			.finally(() => setLoading(false));
 	}, []);
 
+	// login and signup both return the user now, no second /me call needed
 	const signup = async (username, email, password) => {
-		await auth.signup(username, email, password);
-		setUser(await auth.me());
+		const { token, ...me } = await auth.signup(username, email, password);
+		setUser(me);
 	};
 
 	const login = async (email, password) => {
-		await auth.login(email, password);
-		setUser(await auth.me());
+		const { token, ...me } = await auth.login(email, password);
+		setUser(me);
 	};
 
 	const logout = () => {

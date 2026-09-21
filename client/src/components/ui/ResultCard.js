@@ -2,36 +2,23 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Modal from './Modal';
-
-const describe = (item) => {
-	const images = item.images ?? item.album?.images ?? [];
-	const artists = item.artists?.map((a) => a.name).join(', ');
-	return {
-		image: images[0]?.url,
-		name: item.name,
-		subtitle:
-			item.type === 'artist'
-				? item.genres?.slice(0, 2).join(' · ') || 'Artist'
-				: artists,
-	};
-};
+import { toSubject } from '@/services/spotify';
 
 function ResultCard({ item }) {
-	const { image, name, subtitle } = describe(item);
+	const { image_url, name, subtitle, spotify_url } = toSubject(item);
 	const [open, setOpen] = useState(false);
-	// only albums and tracks can be reviewed
+	// only albums and tracks can be reviewed, artists go to spotify
 	const reviewable = item.type === 'album' || item.type === 'track';
-	const spotifyUrl = item.external_urls?.spotify;
+
 	const card = (
 		<motion.div
-			className={`flex flex-col w-60 shrink-0 ${reviewable ? 'cursor-pointer' : ''}`}
-			whileHover={reviewable ? { y: -4 } : undefined}
-			onClick={reviewable ? () => setOpen(true) : undefined}
+			className="flex flex-col w-60 shrink-0 cursor-pointer"
+			whileHover={{ y: -4 }}
 		>
 			<div className="w-60 h-60 rounded-md overflow-hidden border border-gray-300 bg-white">
-				{image ? (
+				{image_url ? (
 					<img
-						src={image}
+						src={image_url}
 						alt={name}
 						className="w-full h-full object-cover"
 					/>
@@ -45,19 +32,24 @@ function ResultCard({ item }) {
 			<p className="text-sm text-gray-500 truncate">{subtitle}</p>
 		</motion.div>
 	);
+
+	if (!reviewable) {
+		return spotify_url ? (
+			<a
+				href={spotify_url}
+				target="_blank"
+				rel="noreferrer"
+			>
+				{card}
+			</a>
+		) : (
+			card
+		);
+	}
+
 	return (
 		<>
-			{reviewable ? (
-				<div onClick={() => setOpen(true)}>{card}</div>
-			) : (
-				<a
-					href={spotifyUrl}
-					target="_blank"
-					rel="noreferrer"
-				>
-					{card}
-				</a>
-			)}
+			<div onClick={() => setOpen(true)}>{card}</div>
 
 			{/* AnimatePresence out here so the close animation works */}
 			<AnimatePresence>

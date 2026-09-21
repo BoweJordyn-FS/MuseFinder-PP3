@@ -5,6 +5,7 @@ import { useParams, useSearchParams, notFound } from 'next/navigation';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { search, CATEGORIES } from '@/services/spotify';
 import ResultCard from '@/components/ui/ResultCard';
+import { errorMessage } from '@/lib/api';
 import { ArrowCircleLeft } from 'iconsax-react';
 
 function CategoryInner() {
@@ -59,9 +60,7 @@ function CategoryInner() {
 			</div>
 
 			{error && (
-				<p className="text-red-600 mb-6">
-					{error.response?.data?.error || error.message}
-				</p>
+				<p className="text-red-600 mb-6">{errorMessage(error)}</p>
 			)}
 
 			{isPending && <p className="text-gray-500">Searching…</p>}

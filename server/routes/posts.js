@@ -3,6 +3,7 @@ const router = express.Router();
 const Post = require('../models/Post');
 const Playlist = require('../models/Playlist');
 const requireAuth = require('../middleware/requireAuth');
+const pick = require('../utils/pick');
 
 const AUTHOR_FIELDS = 'username email';
 
@@ -16,10 +17,21 @@ const SUBJECT_FIELDS = [
 	'spotify_url',
 	'release_date',
 ];
-const pick = (source, keys) =>
-	Object.fromEntries(
-		keys.filter((k) => k in source).map((k) => [k, source[k]]),
-	);
+
+// load the post and make sure it's yours
+const loadOwnPost = async (req, res, next) => {
+	try {
+		const post = await Post.findById(req.params.id);
+		if (!post) return res.status(404).json({ error: 'Post not found' });
+		if (!post.author.equals(req.user._id)) {
+			return res.status(403).json({ error: 'Not your post' });
+		}
+		req.post = post;
+		next();
+	} catch (error) {
+		next(error);
+	}
+};
 
 // GET — all posts newest first. filter with ?subjectId&subjectType or ?author, page with ?limit&page
 router.get('/', async (req, res, next) => {
@@ -82,36 +94,24 @@ router.post('/', requireAuth, async (req, res, next) => {
 });
 
 // PATCH — edit content or rating, author only
-router.patch('/:id', requireAuth, async (req, res, next) => {
+router.patch('/:id', requireAuth, loadOwnPost, async (req, res, next) => {
 	try {
-		const post = await Post.findById(req.params.id);
-		if (!post) return res.status(404).json({ error: 'Post not found' });
-		if (!post.author.equals(req.user._id)) {
-			return res.status(403).json({ error: 'Not your post' });
-		}
-
-		const updates = pick(req.body, ['content', 'rating']);
-		Object.assign(post, updates);
-		await post.save();
-		await post.populate('author', AUTHOR_FIELDS);
-		res.json(post);
+		Object.assign(req.post, pick(req.body, ['content', 'rating']));
+		await req.post.save();
+		await req.post.populate('author', AUTHOR_FIELDS);
+		res.json(req.post);
 	} catch (error) {
 		next(error);
 	}
 });
 
 // DELETE — author only, also pulls it out of any playlists
-router.delete('/:id', requireAuth, async (req, res, next) => {
+router.delete('/:id', requireAuth, loadOwnPost, async (req, res, next) => {
 	try {
-		const post = await Post.findById(req.params.id);
-		if (!post) return res.status(404).json({ error: 'Post not found' });
-		if (!post.author.equals(req.user._id)) {
-			return res.status(403).json({ error: 'Not your post' });
-		}
-
+		const id = req.post._id;
 		await Promise.all([
-			post.deleteOne(),
-			Playlist.updateMany({ posts: post._id }, { $pull: { posts: post._id } }),
+			req.post.deleteOne(),
+			Playlist.updateMany({ posts: id }, { $pull: { posts: id } }),
 		]);
 		res.json({ message: 'Post deleted' });
 	} catch (error) {

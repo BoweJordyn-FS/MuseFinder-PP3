@@ -1,8 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'motion/react';
-import { AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Rating, Textarea, Group, Badge, Loader } from '@mantine/core';
 import { Star1, TickCircle, PlayCircle, AddSquare } from 'iconsax-react';
 import { useForm } from '@mantine/form';
@@ -10,10 +9,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost } from '@/services/posts';
 import { toSubject } from '@/services/spotify';
 import { useAuth } from '@/context/AuthContext';
+import { errorMessage } from '@/lib/api';
 
 // review modal for an album or track
 function Modal({ item, onClose }) {
 	const { user } = useAuth();
+	// login check off for now, put `user` back here when auth is on
+	const canReview = true; // user
 	const queryClient = useQueryClient();
 	const subject = toSubject(item);
 
@@ -69,7 +71,7 @@ function Modal({ item, onClose }) {
 		const onKey = (e) => e.key === 'Escape' && handleClose();
 		window.addEventListener('keydown', onKey);
 		return () => window.removeEventListener('keydown', onKey);
-	});
+	}, [isPending]);
 
 	const year = subject.release_date?.slice(0, 4);
 
@@ -183,8 +185,7 @@ function Modal({ item, onClose }) {
 					</div>
 				</div>
 
-				{/* login check off for now, put back: {user ? ( ... ) : ( login message )} */}
-				{/* {user ? ( */}
+				{canReview ? (
 					<form
 						onSubmit={handleSubmit}
 						className="flex flex-col gap-4"
@@ -225,9 +226,7 @@ function Modal({ item, onClose }) {
 							className="border border-[#925FF0] bg-[#1a1a1a] p-2 rounded-sm"
 						/>
 						{error && (
-							<p className="text-red-400 text-sm">
-								{error.response?.data?.error || error.message}
-							</p>
+							<p className="text-red-400 text-sm">{errorMessage(error)}</p>
 						)}
 						<Group justify="space-between">
 							<button
@@ -249,7 +248,7 @@ function Modal({ item, onClose }) {
 							</button>
 						</Group>
 					</form>
-				{/* ) : (
+				) : (
 					<p className="text-gray-300 text-sm">
 						<Link
 							href="/login"
@@ -259,7 +258,7 @@ function Modal({ item, onClose }) {
 						</Link>{' '}
 						to review this {subject.type}.
 					</p>
-				)} */}
+				)}
 			</motion.div>
 		</motion.div>
 	);

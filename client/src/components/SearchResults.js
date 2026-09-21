@@ -7,6 +7,7 @@ import { Group, Scroller } from '@mantine/core';
 import { BsSoundwave } from 'react-icons/bs';
 import { ArrowCircleRight } from 'iconsax-react';
 import { search } from '@/services/spotify';
+import { errorMessage } from '@/lib/api';
 import ResultCard from '@/components/ui/ResultCard';
 
 const ROWS = [
@@ -16,7 +17,6 @@ const ROWS = [
 ];
 
 function SearchResults({ q }) {
-	// same key as the home page so this hits the cache
 	const {
 		data: results,
 		isPending,
@@ -30,9 +30,7 @@ function SearchResults({ q }) {
 	if (!q) return null;
 	if (error) {
 		return (
-			<p className="p-10 text-red-600">
-				{error.response?.data?.error || error.message}
-			</p>
+			<p className="p-10 text-red-600">{errorMessage(error)}</p>
 		);
 	}
 	if (isPending) return <p className="p-10 text-gray-500">Searching…</p>;

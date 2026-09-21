@@ -7,8 +7,8 @@ import { useQuery } from '@tanstack/react-query';
 import PostCard from '@/components/ui/PostCard';
 import { useAuth } from '@/context/AuthContext';
 import { getPostsByUser } from '@/services/posts';
+import { errorMessage } from '@/lib/api';
 import '@mantine/core/styles/Tabs.css';
-import Login from '../(auth)/login/page';
 
 function Profile() {
 	const { user, loading } = useAuth();
@@ -113,9 +113,7 @@ function Profile() {
 						)}
 						{user && isPending && <p className="text-gray-500">Loading…</p>}
 						{error && (
-							<p className="text-red-500">
-								{error.response?.data?.error || error.message}
-							</p>
+							<p className="text-red-500">{errorMessage(error)}</p>
 						)}
 						{user && !isPending && posts.length === 0 && (
 							<p className="text-gray-500">

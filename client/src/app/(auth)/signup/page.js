@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { errorMessage } from '@/lib/api';
 import { Eye, EyeSlash } from 'iconsax-react';
 
 function Signup() {
@@ -23,7 +24,7 @@ function Signup() {
 	// 		await signup(username, email, password);
 	// 		router.push('/');
 	// 	} catch (err) {
-	// 		setError(err.response?.data?.error || err.message || 'Signup failed');
+	// 		setError(errorMessage(err));
 	// 		setIsSubmitting(false);
 	// 	}
 	// };

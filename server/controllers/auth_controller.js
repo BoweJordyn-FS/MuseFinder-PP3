@@ -13,8 +13,19 @@ const tokenForUser = (user) => {
 		config.secret,
 	);
 };
-exports.login = async (req, res, next) => {
-	res.send({ token: tokenForUser(req.user), user_id: req.user._id });
+// what the client gets back from login, signup and /me
+const publicUser = (user) => ({
+	user_id: user._id,
+	username: user.username,
+	email: user.email,
+});
+
+exports.login = (req, res) => {
+	res.json({ token: tokenForUser(req.user), ...publicUser(req.user) });
+};
+
+exports.me = (req, res) => {
+	res.json(publicUser(req.user));
 };
 
 exports.signup = async (req, res, next) => {
@@ -37,11 +48,7 @@ exports.signup = async (req, res, next) => {
 		const user = new User({ username, email, password });
 		await user.save();
 
-		res.status(201).json({
-			user_id: user._id,
-			token: tokenForUser(user),
-			message: 'User created successfully',
-		});
+		res.status(201).json({ token: tokenForUser(user), ...publicUser(user) });
 	} catch (error) {
 		next(error);
 	}

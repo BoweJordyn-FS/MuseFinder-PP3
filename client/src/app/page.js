@@ -5,23 +5,11 @@ import { motion } from 'motion/react';
 import { CiSearch } from 'react-icons/ci';
 import SearchResults from '@/components/SearchResults';
 import bg from './images/musefinderbg.png';
-import { useQuery } from '@tanstack/react-query';
-import { search } from '@/services/spotify';
 
 export default function Home() {
 	const [query, setQuery] = useState('');
 	const [submitted, setSubmitted] = useState('');
 	const show = Boolean(submitted);
-
-	const {
-		data: results,
-		isPending,
-		error,
-	} = useQuery({
-		queryKey: ['search', submitted],
-		queryFn: () => search(submitted),
-		enabled: show,
-	});
 
 	return (
 		<main className="relative flex flex-1 flex-col overflow-hidden">
