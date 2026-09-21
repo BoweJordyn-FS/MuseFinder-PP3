@@ -6,6 +6,9 @@
 :root {
 	--background: #ffffff;
 	--foreground: #171717;
+	/* Neumorphic shadow pair: a shade darker and lighter than --background */
+	--neu-dark: #d6d6d6;
+	--neu-light: #ffffff;
 }
 
 @theme inline {
@@ -19,6 +22,8 @@
 	:root {
 		--background: #0a0a0a;
 		--foreground: #ededed;
+		--neu-dark: #000000;
+		--neu-light: #1e1e1e;
 	}
 }
 
@@ -44,5 +49,37 @@ body {
 
 	.float-input:focus + .float-label {
 		@apply -top-3.5 scale-75 text-[#925FF0];
+	}
+}
+
+/* Neumorphic search bar: same color as the page so it reads as a soft
+   recess carved into the surface rather than a box sitting on it. */
+@layer components {
+	.neu-input {
+		background: var(--background);
+		color: var(--foreground);
+		border: none;
+		border-radius: 9999px;
+		box-shadow:
+			inset 6px 6px 12px var(--neu-dark),
+			inset -6px -6px 12px var(--neu-light);
+		transition: box-shadow 200ms ease;
+	}
+
+	.neu-input::placeholder {
+		color: #8a8a8a;
+	}
+
+	.neu-input:focus {
+		outline: none;
+		box-shadow:
+			inset 6px 6px 12px var(--neu-dark),
+			inset -6px -6px 12px var(--neu-light),
+			0 0 0 2px rgba(146, 95, 240, 0.55);
+	}
+
+	/* Hide the browser's own clear button; it clashes with the soft look */
+	.neu-input::-webkit-search-cancel-button {
+		-webkit-appearance: none;
 	}
 }

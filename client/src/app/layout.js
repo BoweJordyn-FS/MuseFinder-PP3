@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import '@mantine/core/styles.layer.css';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
+import { QueryProvider } from '@/context/QueryProvider';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -28,14 +29,15 @@ export default function RootLayout({ children }) {
 			{...mantineHtmlProps}
 		>
 			<body className="min-h-full flex flex-col">
-				<MantineProvider>
-					<AuthProvider>
-						<Header />
-						{/* Pages render their own <main>; this is just the growth area
-						    that makes the body's flex column fill the viewport. */}
-						<div className="flex-1">{children}</div>
-					</AuthProvider>
-				</MantineProvider>
+				<QueryProvider>
+					<MantineProvider>
+						<AuthProvider>
+							<Header />
+
+							<div className="flex flex-1 flex-col">{children}</div>
+						</AuthProvider>
+					</MantineProvider>
+				</QueryProvider>
 			</body>
 		</html>
 	);

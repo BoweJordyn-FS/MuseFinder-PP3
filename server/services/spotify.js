@@ -26,9 +26,14 @@ const getToken = async () => {
 
 const hasToken = () => Boolean(token) && Date.now() < expiresAt;
 
-const search = async (q) => {
+// type: comma-separated list of artist/album/track.
+// Spotify's search currently rejects limit > 10, so it's clamped. Use
+// offset to page through the rest.
+const search = async (q, type = 'artist,album,track', limit = 10, offset = 0) => {
+	limit = Math.min(Math.max(Number(limit) || 10, 1), 10);
+	offset = Math.max(Number(offset) || 0, 0);
 	const { data } = await axios.get('https://api.spotify.com/v1/search', {
-		params: { q, type: 'artist,album,track' },
+		params: { q, type, limit, offset },
 		headers: { Authorization: `Bearer ${await getToken()}` },
 	});
 	return data;

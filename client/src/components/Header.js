@@ -1,6 +1,6 @@
 'use client';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
-import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 
 function Header() {

@@ -119,20 +119,18 @@ router.get('/token', async (req, res, next) => {
 	}
 });
 
-// GET /search?q=${params}
+// GET /search?q=radiohead                          all three types, 10 each
+// GET /search?q=radiohead&type=artist&offset=10    one type, next page
 router.get('/search', async (req, res, next) => {
-	const params = new URLSearchParams({
-		q: req.query.q,
-		type: 'album,track,artist',
-		limit: 20,
-	});
-
-	const response = await fetch(`https://api.spotify.com/v1/search?${params}`, {
-		headers: { Authorization: `Bearer ${accessToken}` },
-	});
-
-	const data = await response.json();
-	res.json(data);
+	const { q, type, limit, offset } = req.query;
+	if (!q) {
+		return res.status(400).json({ error: 'q is required' });
+	}
+	try {
+		res.json(await spotify.search(q, type, limit, offset));
+	} catch (error) {
+		next(error);
+	}
 });
 
 module.exports = router;
