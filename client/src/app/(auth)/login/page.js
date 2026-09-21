@@ -15,18 +15,18 @@ function Login() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState(null);
 
-	// const handleLogin = async (e) => {
-	// 	e.preventDefault();
-	// 	setIsSubmitting(true);
-	// 	setError(null);
-	// 	try {
-	// 		await login(email, password);
-	// 		router.push('/');
-	// 	} catch (err) {
-	// 		setError(errorMessage(err));
-	// 		setIsSubmitting(false);
-	// 	}
-	// };
+	const handleLogin = async (e) => {
+		e.preventDefault();
+		setIsSubmitting(true);
+		setError(null);
+		try {
+			const me = await login(email, password);
+			router.push(me.spotify_connected ? '/' : '/connect');
+		} catch (err) {
+			setError(errorMessage(err));
+			setIsSubmitting(false);
+		}
+	};
 
 	return (
 		<main className="flex flex-col justify-center h-full p-10">
@@ -34,7 +34,7 @@ function Login() {
 			<div className="self-center">
 				<form
 					className="text-black w-md"
-					// onSubmit={handleLogin}
+					onSubmit={handleLogin}
 				>
 					<div className="relative mt-6">
 						<input

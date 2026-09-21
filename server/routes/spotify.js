@@ -1,43 +1,45 @@
 const express = require('express');
-const crypto = require('crypto');
 const router = express.Router();
 const spotify = require('../services/spotify');
+const requireAuth = require('../middleware/requireAuth');
 
 const client_url = process.env.CLIENT_URL || 'http://localhost:3000';
 
-let pendingState = null;
-
 // ---- Authorization code flow ------------------------------------------
 
-// send the browser to Spotify's login page.
-router.get('/login', (req, res) => {
-	pendingState = crypto.randomBytes(8).toString('hex');
-	res.redirect(spotify.authorizeUrl(pendingState));
+// gives the frontend the spotify login url, needs a login so we know who it is
+router.get('/login', requireAuth, (req, res) => {
+	res.json({ url: spotify.authorizeUrl(req.user._id) });
 });
 
 // spotify sends the browser back here with a code, swap it for tokens and save
 router.get('/callback', async (req, res, next) => {
-	const { code, state } = req.query;
-	if (!state || state !== pendingState) {
-		return res.status(400).json({ error: 'state_mismatch' });
-	}
-	pendingState = null;
+	const { code, state, error } = req.query;
+	if (error) return res.redirect(`${client_url}/connect?error=${error}`);
+
+	let userId;
 	try {
-		await spotify.exchangeCode(code);
+		userId = spotify.userIdFromState(state);
+	} catch {
+		return res.redirect(`${client_url}/connect?error=state_mismatch`);
+	}
+
+	try {
+		await spotify.exchangeCode(code, userId);
 		res.redirect(client_url);
-	} catch (error) {
-		next(error);
+	} catch (err) {
+		next(err);
 	}
 });
 
 // use the stored refresh token to get a new access token.
-router.get('/refresh_token', async (req, res, next) => {
+router.get('/refresh_token', requireAuth, async (req, res, next) => {
 	try {
-		const refreshed = await spotify.refreshToken();
+		const refreshed = await spotify.refreshUserToken(req.user);
 		if (!refreshed) {
 			return res
 				.status(400)
-				.json({ error: 'No refresh token stored. Visit /login first.' });
+				.json({ error: 'Spotify not connected. Visit /login first.' });
 		}
 		res.json({ status: true });
 	} catch (error) {
@@ -45,10 +47,19 @@ router.get('/refresh_token', async (req, res, next) => {
 	}
 });
 
-// is there a valid token in the db
-router.get('/status', async (req, res, next) => {
+// has this user connected spotify yet
+router.get('/status', requireAuth, (req, res) => {
+	res.json({ status: spotify.isConnected(req.user) });
+});
+
+// the user's spotify profile, refreshes the token first if it expired
+router.get('/me', requireAuth, async (req, res, next) => {
 	try {
-		res.json({ status: await spotify.hasStoredToken() });
+		const profile = await spotify.getUserProfile(req.user);
+		if (!profile) {
+			return res.status(400).json({ error: 'Spotify not connected' });
+		}
+		res.json(profile);
 	} catch (error) {
 		next(error);
 	}

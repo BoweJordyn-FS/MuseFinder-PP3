@@ -1,6 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useState } from 'react';
 import * as auth from '@/services/auth';
+import { getConnectUrl } from '@/services/spotify';
 
 const AuthContext = createContext(null);
 
@@ -21,11 +22,13 @@ export function AuthProvider({ children }) {
 	const signup = async (username, email, password) => {
 		const { token, ...me } = await auth.signup(username, email, password);
 		setUser(me);
+		return me;
 	};
 
 	const login = async (email, password) => {
 		const { token, ...me } = await auth.login(email, password);
 		setUser(me);
+		return me;
 	};
 
 	const logout = () => {
@@ -33,8 +36,15 @@ export function AuthProvider({ children }) {
 		setUser(null);
 	};
 
+	// sends the browser to spotify's consent screen, comes back via /callback
+	const connectSpotify = async () => {
+		window.location.href = await getConnectUrl();
+	};
+
 	return (
-		<AuthContext.Provider value={{ user, loading, signup, login, logout }}>
+		<AuthContext.Provider
+			value={{ user, loading, signup, login, logout, connectSpotify }}
+		>
 			{children}
 		</AuthContext.Provider>
 	);

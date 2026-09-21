@@ -18,6 +18,8 @@ const publicUser = (user) => ({
 	user_id: user._id,
 	username: user.username,
 	email: user.email,
+	// has this user gone through spotify authorization yet
+	spotify_connected: Boolean(user.spotify?.refresh_token),
 });
 
 exports.login = (req, res) => {

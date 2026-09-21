@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		default: Date.now,
 	},
+	// spotify tokens from the authorization code flow, one set per user
+	spotify: {
+		access_token: String,
+		refresh_token: String,
+		expires_at: Date,
+	},
 });
 userSchema.pre('save', async function () {
 	const user = this;

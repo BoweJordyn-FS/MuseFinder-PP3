@@ -1,13 +1,11 @@
 import api from '@/lib/api';
 
-// url segment -> spotify type
 export const CATEGORIES = {
 	artists: 'artist',
 	albums: 'album',
 	tracks: 'track',
 };
 
-// no type = all three, with type = just that one. 10 per page, use offset for more
 export const search = async (q, { type, offset = 0 } = {}) => {
 	const { data } = await api.get('/spotify/v1/search', {
 		params: { q, type, offset },
@@ -15,8 +13,6 @@ export const search = async (q, { type, offset = 0 } = {}) => {
 	return data;
 };
 
-// turn a spotify item into the subject shape the post model wants
-// (also what the cards render from)
 export const toSubject = (item) => ({
 	spotify_id: item.id,
 	type: item.type,
@@ -31,3 +27,21 @@ export const toSubject = (item) => ({
 			? item.genres?.slice(0, 2).join(' · ') || 'Artist'
 			: item.artists?.map((a) => a.name).join(', '),
 });
+
+// ---- user's own spotify connection (needs a musefinder login) ----------
+
+export const getConnectUrl = async () => {
+	const { data } = await api.get('/spotify/v1/login');
+	return data.url;
+};
+
+export const getSpotifyStatus = async () => {
+	const { data } = await api.get('/spotify/v1/status');
+	return data;
+};
+
+// the user's spotify profile (display_name, images, ...)
+export const getSpotifyProfile = async () => {
+	const { data } = await api.get('/spotify/v1/me');
+	return data;
+};

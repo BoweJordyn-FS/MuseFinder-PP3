@@ -5,6 +5,7 @@ import '@mantine/core/styles.layer.css';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { QueryProvider } from '@/context/QueryProvider';
+import SpotifyConnect from '@/components/SpotifyConnect';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -34,7 +35,9 @@ export default function RootLayout({ children }) {
 						<AuthProvider>
 							<Header />
 
-							<div className="flex flex-1 flex-col">{children}</div>
+							<div className="flex flex-1 flex-col">
+								<SpotifyConnect>{children}</SpotifyConnect>
+							</div>
 						</AuthProvider>
 					</MantineProvider>
 				</QueryProvider>
