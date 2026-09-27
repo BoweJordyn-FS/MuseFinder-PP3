@@ -5,8 +5,6 @@ import { Progress } from '@mantine/core';
 const levels = [5, 4, 3, 2, 1];
 const stars = (n) => '★'.repeat(n) + '☆'.repeat(5 - n);
 
-// how many reviews got each rating. bars are relative to the most common
-// one so the shape still reads with only a few reviews
 function RatingBreakdown({ posts = [] }) {
 	const counts = levels.map(
 		(level) => posts.filter((post) => post.rating === level).length,
