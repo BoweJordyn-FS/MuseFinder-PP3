@@ -28,6 +28,7 @@ function Header() {
 		queryKey: ['spotify', 'me'],
 		queryFn: getSpotifyProfile,
 	});
+
 	const avatar = profile?.images?.[0]?.url;
 
 	return (
@@ -70,24 +71,13 @@ function Header() {
 							</div>
 						</Menu.Target>
 						<Menu.Dropdown>
-							<Menu.Item>
-								<Link
-									href="/profile"
-									className="text-md hover:text-[#925FF0]"
-								>
-									Profile
-								</Link>
+							<Menu.Item
+								component={Link}
+								href="/profile"
+							>
+								Profile
 							</Menu.Item>
-							<Menu.Item>
-								{user && (
-									<button
-										onClick={logout}
-										className="text-md  hover:text-[#925FF0]"
-									>
-										Logout
-									</button>
-								)}
-							</Menu.Item>
+							{user && <Menu.Item onClick={logout}>Logout</Menu.Item>}
 						</Menu.Dropdown>
 					</Menu>
 				</div>

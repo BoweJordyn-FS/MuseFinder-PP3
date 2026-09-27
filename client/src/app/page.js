@@ -1,5 +1,7 @@
 'use client';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
 import { motion } from 'motion/react';
 import { CiSearch } from 'react-icons/ci';
@@ -7,10 +9,16 @@ import SearchResults from '@/components/SearchResults';
 import bg from './images/musefinderbg.png';
 
 export default function Home() {
+	const { user, loading } = useAuth();
+	const router = useRouter();
+
 	const [query, setQuery] = useState('');
 	const [submitted, setSubmitted] = useState('');
 	const show = Boolean(submitted);
 
+	useEffect(() => {
+		if (!loading && !user) router.replace('/login');
+	}, [loading, user, router]);
 	return (
 		<main className="relative flex flex-1 flex-col overflow-hidden">
 			<motion.div

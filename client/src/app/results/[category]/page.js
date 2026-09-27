@@ -37,7 +37,13 @@ function CategoryInner() {
 	if (!q)
 		return <p className="p-10 text-gray-500">Search for something first.</p>;
 
-	const items = data?.pages.flatMap((page) => page[category].items) ?? [];
+	const items = [
+		...new Map(
+			(data?.pages.flatMap((page) => page[category].items) ?? []).map(
+				(item) => [item.id, item],
+			),
+		).values(),
+	];
 	const title = category[0].toUpperCase() + category.slice(1);
 
 	return (
@@ -59,9 +65,7 @@ function CategoryInner() {
 				</Link>
 			</div>
 
-			{error && (
-				<p className="text-red-600 mb-6">{errorMessage(error)}</p>
-			)}
+			{error && <p className="text-red-600 mb-6">{errorMessage(error)}</p>}
 
 			{isPending && <p className="text-gray-500">Searching…</p>}
 

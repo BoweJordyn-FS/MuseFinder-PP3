@@ -44,7 +44,7 @@ function PostCard({ post }) {
 	const [draft, setDraft] = useState(post?.content ?? '');
 	const [formError, setFormError] = useState(null);
 	const [type, setType] = useState(true);
-	const { author, subject, rating, content, createdAt } = post;
+	const { subject, rating, content, createdAt } = post;
 
 	const stopEditing = () => {
 		setDraft(post.content ?? '');
@@ -75,7 +75,6 @@ function PostCard({ post }) {
 		onError: (error) => setFormError(errorMessage(error)),
 	});
 
-	// the model needs a rating on reviews and content is always required
 	const save = () => {
 		if (!draft.trim()) return setFormError('Write something first');
 		if (post.type === 'review' && ratingDraft < 1) {
@@ -114,9 +113,9 @@ function PostCard({ post }) {
 					id="pc-header"
 					className="flex flex-row gap-1 space-x-1.5 content-center"
 				>
-					<p className="text-base font-extralight">
-						@{author?.username ?? 'unknown'} ·{' '}
-						<span className="text-gray-500 text-sm font-extralight italic">
+					<p className="text-sm font-extralight uppercase italic">
+						{subject?.type ?? 'post'} ·{' '}
+						<span className="text-gray-500 text-sm font-extralight italic normal-case">
 							{relativeTime(createdAt)}
 						</span>
 					</p>

@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { MusicLibrary2 } from 'iconsax-react';
 import Modal from './Modal';
 import { toSubject } from '@/services/spotify';
 
@@ -23,8 +24,12 @@ function ResultCard({ item }) {
 						className="w-full h-full object-cover"
 					/>
 				) : (
-					<div className="w-full h-full flex items-center justify-center text-gray-400">
-						No image
+					<div className="w-full h-full flex items-center justify-center bg-[#10100ec3]">
+						<MusicLibrary2
+							size={32}
+							variant="Broken"
+							color="#10100E"
+						/>
 					</div>
 				)}
 			</div>

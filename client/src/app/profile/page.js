@@ -24,7 +24,6 @@ function Profile() {
 	const { user, loading } = useAuth();
 	const router = useRouter();
 
-	// my posts, refetches after the modal posts a new one
 	const { data, isPending, error } = useQuery({
 		queryKey: ['posts', { author: user?.user_id }],
 		queryFn: () => getPostsByUser(user.user_id),
