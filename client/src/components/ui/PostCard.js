@@ -126,7 +126,7 @@ function PostCard({ post }) {
 							<img
 								src={subject.image_url}
 								alt={subject.name}
-								className="w-50 h-50 rounded-lg object-cover shrink-0"
+								className="w-40 h-40 rounded-lg object-cover shrink-0"
 							/>
 						) : (
 							<div className="w-50 h-50 rounded-lg shrink-0 bg-white" />

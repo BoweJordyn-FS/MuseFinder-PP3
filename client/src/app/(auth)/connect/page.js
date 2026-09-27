@@ -39,9 +39,9 @@ function Connect() {
 	if (loading || !user) return null;
 
 	return (
-		<main className="flex flex-col justify-center h-full p-10">
-			<h1 className="text-3xl font-bold text-black ml-20">Connect Spotify</h1>
-			<div className="self-center w-md text-black">
+		<main className="flex flex-1 flex-col justify-center p-6 sm:p-10">
+			<div className="mx-auto w-full max-w-md text-black">
+				<h1 className="text-3xl font-bold">Connect Spotify</h1>
 				<p className="mt-6 text-gray-600">
 					MuseFinder uses your Spotify account to find what you listen to.
 				</p>

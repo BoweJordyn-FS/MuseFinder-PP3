@@ -12,21 +12,17 @@ function Header() {
 	const { user, logout } = useAuth();
 	const pathname = usePathname();
 
-	function RefeshButton() {
-		const handleRefresh = () => {
-			window.location.reload();
-		};
-	}
-
 	const handleDiscover = (e) => {
 		if (pathname === '/') {
 			e.preventDefault();
 			window.location.reload();
 		}
 	};
+	// no user, no request, and no stale avatar left behind
 	const { data: profile } = useQuery({
 		queryKey: ['spotify', 'me'],
 		queryFn: getSpotifyProfile,
+		enabled: Boolean(user),
 	});
 
 	const avatar = profile?.images?.[0]?.url;
@@ -71,12 +67,21 @@ function Header() {
 							</div>
 						</Menu.Target>
 						<Menu.Dropdown>
-							<Menu.Item
-								component={Link}
-								href="/profile"
-							>
-								Profile
-							</Menu.Item>
+							{!user ? (
+								<Menu.Item
+									component={Link}
+									href="/signup"
+								>
+									Sign Up
+								</Menu.Item>
+							) : (
+								<Menu.Item
+									component={Link}
+									href="/profile"
+								>
+									Profile
+								</Menu.Item>
+							)}
 							{user && <Menu.Item onClick={logout}>Logout</Menu.Item>}
 						</Menu.Dropdown>
 					</Menu>

@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import * as auth from '@/services/auth';
 import { getConnectUrl } from '@/services/spotify';
 
@@ -8,6 +9,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
 	const [user, setUser] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const queryClient = useQueryClient();
 
 	useEffect(() => {
 		if (!localStorage.getItem('token')) return setLoading(false);
@@ -34,6 +36,8 @@ export function AuthProvider({ children }) {
 	const logout = () => {
 		auth.logout();
 		setUser(null);
+		// everything cached is this user's, don't leave it for the next one
+		queryClient.clear();
 	};
 
 	// sends the browser to spotify's consent screen, comes back via /callback
