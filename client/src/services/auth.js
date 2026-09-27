@@ -1,11 +1,7 @@
 import api from '@/lib/api';
 
-export const signup = async (username, email, password) => {
-	const { data } = await api.post('/api/v1/auth/signup', {
-		username,
-		email,
-		password,
-	});
+export const signup = async (email, password) => {
+	const { data } = await api.post('/api/v1/auth/signup', { email, password });
 	localStorage.setItem('token', data.token);
 	return data;
 };

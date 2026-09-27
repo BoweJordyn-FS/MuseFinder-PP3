@@ -4,11 +4,6 @@ const validateEmail = (email) => {
 	return /^\S+@\S+\.\S+$/.test(email);
 };
 const userSchema = new mongoose.Schema({
-	username: {
-		type: String,
-		unique: true,
-		required: 'Username is required',
-	},
 	email: {
 		type: String,
 		unique: true,

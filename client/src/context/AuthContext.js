@@ -19,8 +19,8 @@ export function AuthProvider({ children }) {
 	}, []);
 
 	// login and signup both return the user now, no second /me call needed
-	const signup = async (username, email, password) => {
-		const { token, ...me } = await auth.signup(username, email, password);
+	const signup = async (email, password) => {
+		const { token, ...me } = await auth.signup(email, password);
 		setUser(me);
 		return me;
 	};

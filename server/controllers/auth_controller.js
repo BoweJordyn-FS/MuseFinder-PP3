@@ -16,7 +16,6 @@ const tokenForUser = (user) => {
 // what the client gets back from login, signup and /me
 const publicUser = (user) => ({
 	user_id: user._id,
-	username: user.username,
 	email: user.email,
 	// has this user gone through spotify authorization yet
 	spotify_connected: Boolean(user.spotify?.refresh_token),
@@ -31,23 +30,20 @@ exports.me = (req, res) => {
 };
 
 exports.signup = async (req, res, next) => {
-	const { username, email, password } = req.body;
-	if (!username || !email || !password) {
+	const { email, password } = req.body;
+	if (!email || !password) {
 		return res
 			.status(422)
-			.json({ error: 'please provide a username, email and password' });
+			.json({ error: 'please provide an email and password' });
 	}
 
 	try {
-		const existingUser = await User.findOne({
-			$or: [{ email }, { username }],
-		});
+		const existingUser = await User.findOne({ email });
 		if (existingUser) {
-			const field = existingUser.email === email ? 'Email' : 'Username';
-			return res.status(422).json({ error: `${field} already in use` });
+			return res.status(422).json({ error: 'Email already in use' });
 		}
 
-		const user = new User({ username, email, password });
+		const user = new User({ email, password });
 		await user.save();
 
 		res.status(201).json({ token: tokenForUser(user), ...publicUser(user) });
