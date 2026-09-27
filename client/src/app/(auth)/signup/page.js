@@ -9,7 +9,6 @@ import { Eye, EyeSlash } from 'iconsax-react';
 function Signup() {
 	const { signup } = useAuth();
 	const router = useRouter();
-	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,7 +20,7 @@ function Signup() {
 		setIsSubmitting(true);
 		setError(null);
 		try {
-			const me = await signup(username, email, password);
+			const me = await signup(email, password);
 			router.push(me.spotify_connected ? '/' : '/connect');
 		} catch (err) {
 			setError(errorMessage(err));
@@ -37,23 +36,6 @@ function Signup() {
 					className="mt-6"
 					onSubmit={handleSignup}
 				>
-					<div className="relative mt-6">
-						<input
-							id="username"
-							type="text"
-							className="float-input"
-							placeholder="Username"
-							value={username}
-							onChange={(e) => setUsername(e.target.value)}
-							required
-						/>
-						<label
-							htmlFor="username"
-							className="float-label"
-						>
-							Username
-						</label>
-					</div>
 					<div className="relative mt-6">
 						<input
 							id="email"

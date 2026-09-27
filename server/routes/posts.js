@@ -5,7 +5,7 @@ const requireAuth = require('../middleware/requireAuth');
 const pick = require('../utils/pick');
 const SubjectSchema = require('../models/Subject');
 
-const AUTHOR_FIELDS = 'username email';
+const AUTHOR_FIELDS = 'email';
 
 // only these can come from the client, author always comes from the token
 const SUBJECT_FIELDS = SubjectSchema.statics.FIELDS;
