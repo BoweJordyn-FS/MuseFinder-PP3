@@ -19,6 +19,12 @@ db.once('open', () => {
 
 // Middleware
 app.use(express.json());
+// express 5 leaves req.body undefined when there's no body, an empty
+// object is easier to work with everywhere
+app.use((req, res, next) => {
+	if (!req.body) req.body = {};
+	next();
+});
 app.use(cors());
 app.use(passport.initialize());
 

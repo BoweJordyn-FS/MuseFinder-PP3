@@ -29,16 +29,17 @@ export const deletePlaylist = async (id) => {
 	return data;
 };
 
-export const addPost = async (playlistId, postId) => {
-	const { data } = await api.post(`/api/v1/playlists/${playlistId}/posts`, {
-		postId,
+// subject = the album/track, from toSubject()
+export const addItem = async (playlistId, subject) => {
+	const { data } = await api.post(`/api/v1/playlists/${playlistId}/items`, {
+		subject,
 	});
 	return data;
 };
 
-export const removePost = async (playlistId, postId) => {
+export const removeItem = async (playlistId, spotifyId) => {
 	const { data } = await api.delete(
-		`/api/v1/playlists/${playlistId}/posts/${postId}`,
+		`/api/v1/playlists/${playlistId}/items/${spotifyId}`,
 	);
 	return data;
 };

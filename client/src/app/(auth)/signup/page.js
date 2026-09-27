@@ -30,11 +30,11 @@ function Signup() {
 	};
 
 	return (
-		<main className="flex flex-col justify-center h-full p-10">
-			<h1 className="text-3xl font-bold text-black ml-20">Sign Up</h1>
-			<div className="self-center">
+		<main className="flex flex-1 flex-col justify-center p-6 sm:p-10">
+			<div className="mx-auto w-full max-w-md text-black">
+				<h1 className="text-3xl font-bold">Sign Up</h1>
 				<form
-					className="text-black w-md"
+					className="mt-6"
 					onSubmit={handleSignup}
 				>
 					<div className="relative mt-6">

@@ -1,22 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Post = require('../models/Post');
-const Playlist = require('../models/Playlist');
 const requireAuth = require('../middleware/requireAuth');
 const pick = require('../utils/pick');
+const SubjectSchema = require('../models/Subject');
 
 const AUTHOR_FIELDS = 'username email';
 
 // only these can come from the client, author always comes from the token
-const SUBJECT_FIELDS = [
-	'spotify_id',
-	'type',
-	'name',
-	'artist',
-	'image_url',
-	'spotify_url',
-	'release_date',
-];
+const SUBJECT_FIELDS = SubjectSchema.statics.FIELDS;
 
 // load the post and make sure it's yours
 const loadOwnPost = async (req, res, next) => {
@@ -105,14 +97,10 @@ router.patch('/:id', requireAuth, loadOwnPost, async (req, res, next) => {
 	}
 });
 
-// DELETE — author only, also pulls it out of any playlists
+// DELETE — author only
 router.delete('/:id', requireAuth, loadOwnPost, async (req, res, next) => {
 	try {
-		const id = req.post._id;
-		await Promise.all([
-			req.post.deleteOne(),
-			Playlist.updateMany({ posts: id }, { $pull: { posts: id } }),
-		]);
+		await req.post.deleteOne();
 		res.json({ message: 'Post deleted' });
 	} catch (error) {
 		next(error);

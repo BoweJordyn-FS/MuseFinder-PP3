@@ -52,6 +52,21 @@ router.get('/status', requireAuth, (req, res) => {
 	res.json({ status: spotify.isConnected(req.user) });
 });
 
+// the user's top artists or tracks. /me/top/artists or /me/top/tracks
+router.get('/me/top/:type', requireAuth, async (req, res, next) => {
+	const { type } = req.params;
+	if (type !== 'artists' && type !== 'tracks') {
+		return res.status(400).json({ error: 'type must be artists or tracks' });
+	}
+	try {
+		const items = await spotify.getTopItems(req.user, type, req.query.limit);
+		if (!items) return res.status(400).json({ error: 'Spotify not connected' });
+		res.json(items);
+	} catch (error) {
+		next(error);
+	}
+});
+
 // the user's spotify profile, refreshes the token first if it expired
 router.get('/me', requireAuth, async (req, res, next) => {
 	try {

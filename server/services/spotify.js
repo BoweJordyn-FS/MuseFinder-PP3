@@ -125,6 +125,17 @@ const getUserProfile = async (user) => {
 	});
 	return data;
 };
+// type is 'artists' or 'tracks'. needs the user-top-read scope
+const getTopItems = async (user, type = 'artists', limit = 3) => {
+	const accessToken = await getUserToken(user);
+	if (!accessToken) return null;
+	limit = Math.min(Math.max(Number(limit) || 3, 1), 50);
+	const { data } = await axios.get(`${API_URL}/me/top/${type}`, {
+		params: { limit, time_range: 'medium_term' },
+		headers: { Authorization: `Bearer ${accessToken}` },
+	});
+	return data.items;
+};
 
 module.exports = {
 	getToken,
@@ -136,4 +147,5 @@ module.exports = {
 	getUserToken,
 	isConnected,
 	getUserProfile,
+	getTopItems,
 };

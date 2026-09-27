@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'motion/react';
 import { Rating, Textarea, Group, Badge, Loader } from '@mantine/core';
-import { Star1, TickCircle, PlayCircle, AddSquare } from 'iconsax-react';
+import { Star1, TickCircle, PlayCircle } from 'iconsax-react';
 import { useForm } from '@mantine/form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost } from '@/services/posts';
+import PlaylistPicker from './PlaylistPicker';
 import { toSubject } from '@/services/spotify';
 import { useAuth } from '@/context/AuthContext';
 import { errorMessage } from '@/lib/api';
@@ -88,7 +89,7 @@ function Modal({ item, onClose }) {
 				initial={{ scale: 0.95, y: 8 }}
 				animate={{ scale: 1, y: 0 }}
 				exit={{ scale: 0.95, y: 8 }}
-				className="bg-[#10100E] shadow-2xl shadow-amber-50/10 rounded-2xl p-6 sm:p-8 w-full max-w-md max-h-[90vh] overflow-y-auto relative"
+				className="bg-[#10100E] shadow-2xl shadow-amber-50/10 rounded-2xl p-6 sm:p-8 w-100 max-w-md max-h-[90vh] overflow-y-auto relative"
 			>
 				{/* Posting / success overlay */}
 				<AnimatePresence>
@@ -194,7 +195,7 @@ function Modal({ item, onClose }) {
 							<Rating
 								emptySymbol={
 									<Star1
-										size={24}
+										size={20}
 										variant="Broken"
 										color="#925EF0"
 									/>
@@ -229,16 +230,7 @@ function Modal({ item, onClose }) {
 							<p className="text-red-400 text-sm">{errorMessage(error)}</p>
 						)}
 						<Group justify="space-between">
-							<button
-								type="button"
-								className="text-[#925FF0] px-5 py-2 rounded-md flex flex-row gap-2 cursor-pointer"
-							>
-								<AddSquare
-									size={20}
-									color="white"
-								/>
-								Add to Playlist
-							</button>
+							<PlaylistPicker subject={subject} />
 							<button
 								type="submit"
 								disabled={isPending}

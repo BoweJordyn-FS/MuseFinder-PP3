@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const SubjectSchema = require('./Subject');
 
 const PlaylistSchema = new mongoose.Schema(
 	{
@@ -10,7 +11,8 @@ const PlaylistSchema = new mongoose.Schema(
 		},
 		name: { type: String, required: true, trim: true, maxlength: 100 },
 		description: { type: String, maxlength: 500 },
-		posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
+		// the albums/tracks saved to this playlist
+		items: [SubjectSchema],
 	},
 	{ timestamps: true },
 );

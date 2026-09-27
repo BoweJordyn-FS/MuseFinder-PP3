@@ -45,3 +45,17 @@ export const getSpotifyProfile = async () => {
 	const { data } = await api.get('/spotify/v1/me');
 	return data;
 };
+// both return an array of spotify items
+export const getTopArtists = async (limit = 3) => {
+	const { data } = await api.get('/spotify/v1/me/top/artists', {
+		params: { limit },
+	});
+	return data;
+};
+
+export const getTopTracks = async (limit = 3) => {
+	const { data } = await api.get('/spotify/v1/me/top/tracks', {
+		params: { limit },
+	});
+	return data;
+};

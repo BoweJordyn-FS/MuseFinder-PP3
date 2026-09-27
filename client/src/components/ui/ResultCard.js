@@ -15,7 +15,7 @@ function ResultCard({ item }) {
 			className="flex flex-col w-60 shrink-0 cursor-pointer"
 			whileHover={{ y: -4 }}
 		>
-			<div className="w-60 h-60 rounded-md overflow-hidden border border-gray-300 bg-white">
+			<div className="w-60 h-60 rounded-md overflow-hidden border border-black shadow-gray-500 bg-white">
 				{image_url ? (
 					<img
 						src={image_url}
