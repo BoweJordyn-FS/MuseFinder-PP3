@@ -87,7 +87,7 @@ function PlaylistCard({ playlist, onOpen }) {
 				</div>
 			</button>
 
-			<div className="row-span-1 bg-white text-black flex items-center justify-between px-3 gap-2">
+			<div className="row-span-1 bg-[#E9DFFC] text-black flex items-center justify-between px-3 gap-2">
 				{renaming ? (
 					<input
 						autoFocus
