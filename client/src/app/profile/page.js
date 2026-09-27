@@ -53,12 +53,11 @@ function Profile() {
 	const posts = data?.posts ?? [];
 	const avatar = profile?.images?.[0]?.url;
 
-	// auth guard off while I work on the layout, turn back on later
-	// useEffect(() => {
-	//   if (!loading && !user) router.replace("/login");
-	// }, [loading, user, router]);
-	//
-	// if (loading || !user) return null;
+	useEffect(() => {
+		if (!loading && !user) router.replace('/login');
+	}, [loading, user, router]);
+
+	if (loading || !user) return null;
 
 	return (
 		<main className="grid grid-cols-1 lg:grid-cols-[14rem_1fr] gap-10 px-10 pb-10">
