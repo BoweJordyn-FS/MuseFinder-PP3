@@ -3,41 +3,54 @@ const jwt = require('jwt-simple');
 const config = require('../config');
 
 const tokenForUser = (user) => {
-	const timestamp = new Date().getTime();
+	const now = Math.floor(Date.now() / 1000);
 	return jwt.encode(
 		{
 			sub: user.id,
-			iat: timestamp,
+			iat: now,
+			exp: now + 60 * 60 * 24 * 7,
 		},
 		config.secret,
 	);
 };
-exports.login = async (req, res, next) => {
-	res.send({ token: tokenForUser(req.user), user_id: req.user._id });
+// what the client gets back from login, signup and /me
+const publicUser = (user) => ({
+	user_id: user._id,
+	username: user.username,
+	email: user.email,
+	// has this user gone through spotify authorization yet
+	spotify_connected: Boolean(user.spotify?.refresh_token),
+});
+
+exports.login = (req, res) => {
+	res.json({ token: tokenForUser(req.user), ...publicUser(req.user) });
+};
+
+exports.me = (req, res) => {
+	res.json(publicUser(req.user));
 };
 
 exports.signup = async (req, res, next) => {
-	const { email, password } = req.body;
-	if (!email || !password) {
+	const { username, email, password } = req.body;
+	if (!username || !email || !password) {
 		return res
 			.status(422)
-			.json({ error: 'please provide your email and password' });
+			.json({ error: 'please provide a username, email and password' });
 	}
 
 	try {
-		const existingUser = await User.findOne({ email });
+		const existingUser = await User.findOne({
+			$or: [{ email }, { username }],
+		});
 		if (existingUser) {
-			return res.status(422).json({ error: 'Email already in use' });
+			const field = existingUser.email === email ? 'Email' : 'Username';
+			return res.status(422).json({ error: `${field} already in use` });
 		}
 
-		const user = new User({ email, password });
+		const user = new User({ username, email, password });
 		await user.save();
 
-		res.status(201).json({
-			user_id: user._id,
-			token: tokenForUser(user),
-			message: 'User created successfully',
-		});
+		res.status(201).json({ token: tokenForUser(user), ...publicUser(user) });
 	} catch (error) {
 		next(error);
 	}

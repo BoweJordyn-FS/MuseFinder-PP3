@@ -1,155 +1,73 @@
+'use client';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import Image from 'next/image';
+import { motion } from 'motion/react';
 import { CiSearch } from 'react-icons/ci';
-import { BsSoundwave } from 'react-icons/bs';
-import { Group, Scroller } from '@mantine/core';
+import SearchResults from '@/components/SearchResults';
+import bg from './images/musefinderbg.png';
 
 export default function Home() {
+	const { user, loading } = useAuth();
+	const router = useRouter();
+
+	const [query, setQuery] = useState('');
+	const [submitted, setSubmitted] = useState('');
+	const show = Boolean(submitted);
+
+	useEffect(() => {
+		if (!loading && !user) router.replace('/login');
+	}, [loading, user, router]);
 	return (
-		<div>
-			<main>
-				<div className="flex flex-col justify-center p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10">
-					<form className="mx-2 sm:mx-10 lg:mx-20">
-						<div className="relative">
-							<CiSearch
-								className="absolute left-3 top-1/2 -translate-y-1/2 text-[#925FF0]"
-								size={24}
-							/>
-							<input
-								id="search"
-								type="search"
-								className="border w-full p-2 pl-10 rounded-md focus:outline-3 focus:outline-offset-2 focus:outline-[#925FF0]"
-								placeholder="Search for artists, albums, or songs..."
-							/>
-						</div>
-					</form>
+		<main className="relative flex flex-1 flex-col overflow-hidden">
+			<motion.div
+				className="absolute inset-0 pointer-events-none"
+				initial={false}
+				animate={{ opacity: show ? 0 : 1, scale: show ? 1.08 : 1 }}
+				transition={{ duration: 0.7, ease: 'easeOut' }}
+			>
+				<Image
+					src={bg}
+					alt=""
+					fill
+					priority
+					className="object-fill"
+				/>
+			</motion.div>
 
-					{/* <section className="p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10 grid grid-cols-3 gap-10">
-						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
-							<h2 className="text-xl font-bold self-center">New Release</h2>
-						</div>
-						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
-							<h2 className="text-xl font-bold self-center">New Release</h2>
-						</div>
-						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
-							<h2 className="text-xl font-bold self-center">New Release</h2>
-						</div>
-						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
-							<h2 className="text-xl font-bold self-center">New Release</h2>
-						</div>
-						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
-							<h2 className="text-xl font-bold self-center">New Release</h2>
-						</div>
-						<div className="flex justify-center border rounded-md border-gray-300 w-80 h-80 m-4">
-							<h2 className="text-xl font-bold self-center">New Release</h2>
-						</div>
-					</section> */}
+			<div
+				className={`relative flex flex-1 flex-col p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10 ${
+					show ? 'justify-start' : 'justify-center'
+				}`}
+			>
+				<motion.form
+					layout
+					transition={{ type: 'spring', bounce: 0.2 }}
+					className="mx-2 sm:mx-10 lg:mx-20"
+					onSubmit={(e) => {
+						e.preventDefault();
+						setSubmitted(query.trim());
+					}}
+				>
+					<div className="relative">
+						<CiSearch
+							className="absolute left-4 top-1/2 -translate-y-1/2 text-[#925FF0] pointer-events-none"
+							size={24}
+						/>
+						<input
+							id="search"
+							type="search"
+							className="neu-input w-full py-3 pl-12 pr-5"
+							placeholder="Search for artists, albums, or songs..."
+							value={query}
+							onChange={(e) => setQuery(e.target.value)}
+						/>
+					</div>
+				</motion.form>
 
-					{/* search results */}
-					<section className="p-4 sm:p-6 lg:p-10 m-2 sm:m-6 lg:m-10 flex flex-col gap-20">
-						<article>
-							<div className="border-b-2 border-[#925FF0] mb-10">
-								<h2 className="text-3xl font-bold text-[#925FF0]">Artists</h2>
-							</div>
-							<div
-								id="artistRow"
-								className="flex flex-row gap-4"
-							>
-								<Scroller
-									draggable
-									edgeGradientColor="transparent"
-									startControlIcon={<BsSoundwave size={20} />}
-									endControlIcon={<BsSoundwave size={20} />}
-								>
-									<Group
-										id="artistResults"
-										justify="center"
-										gap="md"
-										wrap="nowrap"
-									>
-										{Array.from({ length: 6 }).map((_, index) => (
-											<div
-												key={index}
-												className="flex justify-center border rounded-md border-gray-300 w-80 h-80"
-											>
-												<p className="text-xl font-bold self-center">
-													Artist Name
-												</p>
-											</div>
-										))}
-									</Group>
-								</Scroller>
-							</div>
-						</article>
-						<article>
-							<div className="border-b-2 border-[#925FF0] mb-10">
-								<h2 className="text-3xl font-bold text-[#925FF0]">Albums</h2>
-							</div>
-							<div
-								id="albumRow"
-								className="flex flex-row gap-4"
-							>
-								<Scroller
-									draggable
-									edgeGradientColor="transparent"
-									startControlIcon={<BsSoundwave size={20} />}
-									endControlIcon={<BsSoundwave size={20} />}
-								>
-									<Group
-										id="albumResults"
-										justify="center"
-										gap="md"
-										wrap="nowrap"
-									>
-										{Array.from({ length: 6 }).map((_, index) => (
-											<div
-												key={index}
-												className="flex justify-center border rounded-md border-gray-300 w-80 h-80"
-											>
-												<p className="text-xl font-bold self-center">
-													Album Name
-												</p>
-											</div>
-										))}
-									</Group>
-								</Scroller>
-							</div>
-						</article>
-						<article>
-							<div className="border-b-2 border-[#925FF0] mb-10">
-								<h2 className="text-3xl font-bold text-[#925FF0]">Tracks</h2>
-							</div>
-							<div
-								id="songRow"
-								className="flex flex-row gap-4"
-							>
-								<Scroller
-									draggable
-									edgeGradientColor="transparent"
-									startControlIcon={<BsSoundwave size={20} />}
-									endControlIcon={<BsSoundwave size={20} />}
-								>
-									<Group
-										id="songResults"
-										justify="center"
-										gap="md"
-										wrap="nowrap"
-									>
-										{Array.from({ length: 6 }).map((_, index) => (
-											<div
-												key={index}
-												className="flex justify-center border rounded-md border-gray-300 w-80 h-80"
-											>
-												<p className="text-xl font-bold self-center">
-													Song Name
-												</p>
-											</div>
-										))}
-									</Group>
-								</Scroller>
-							</div>
-						</article>
-					</section>
-				</div>
-			</main>
-		</div>
+				{show && <SearchResults q={submitted} />}
+			</div>
+		</main>
 	);
 }

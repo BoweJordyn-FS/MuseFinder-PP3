@@ -9,41 +9,29 @@ const config = require('../config');
 const localOptions = {
 	usernameField: 'email',
 };
-const localStrategy = new LocalStrategy(localOptions, async function (
-	email,
-	password,
-	done,
-) {
-	try {
-		const user = await User.findOne({ email });
-		if (!user) {
-			return done(null, false);
-		}
-		user.comparePassword(password, function (error, isMatch) {
-			if (error) {
-				return done(error);
-			}
-			if (!isMatch) {
+const localStrategy = new LocalStrategy(
+	localOptions,
+	async (email, password, done) => {
+		try {
+			const user = await User.findOne({ email });
+			if (!user || !(await user.comparePassword(password))) {
 				return done(null, false);
 			}
 			return done(null, user);
-		});
-	} catch (error) {
-		return done(error);
-	}
-});
+		} catch (error) {
+			return done(error);
+		}
+	},
+);
 const jwtOptions = {
 	secretOrKey: config.secret,
-	jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('bearer'),
+	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 };
 
-const jwtStrategy = new JwtStrategy(jwtOptions, async function (payload, done) {
+const jwtStrategy = new JwtStrategy(jwtOptions, async (payload, done) => {
 	try {
 		const user = await User.findById(payload.sub);
-		if (user) {
-			return done(null, user);
-		}
-		return done(null, false);
+		return done(null, user || false);
 	} catch (error) {
 		return done(error, false);
 	}

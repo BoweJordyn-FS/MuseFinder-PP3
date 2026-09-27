@@ -19,6 +19,12 @@ db.once('open', () => {
 
 // Middleware
 app.use(express.json());
+// express 5 leaves req.body undefined when there's no body, an empty
+// object is easier to work with everywhere
+app.use((req, res, next) => {
+	if (!req.body) req.body = {};
+	next();
+});
 app.use(cors());
 app.use(passport.initialize());
 
@@ -26,17 +32,33 @@ app.use(passport.initialize());
 require('./services/passport');
 
 // Routes
-// /api/v1 holds MuseFinder's own data (accounts, reviews, collections).
-// /spotify/v1 is reserved for the Spotify middleware layer.
+// /api/v1 is our stuff, /spotify/v1 is the spotify middleware
 const authRoutes = require('./routes/auth');
 app.use('/api/v1/auth', authRoutes);
 
-app.use('/spotify/v1/auth', authRoutes);
+const spotifyRoutes = require('./routes/spotify');
+app.use('/spotify/v1', spotifyRoutes);
+
+const postRoutes = require('./routes/posts');
+app.use('/api/v1/posts', postRoutes);
+
+const playlistRoutes = require('./routes/playlists');
+app.use('/api/v1/playlists', playlistRoutes);
 
 app.use((req, res) => {
 	res
 		.status(404)
 		.json({ error: `Not found: ${req.method} ${req.originalUrl}` });
+});
+
+// error handler, sends json instead of the express html page
+app.use((error, req, res, next) => {
+	// bad input from the client
+	if (error.name === 'ValidationError' || error.name === 'CastError') {
+		return res.status(400).json({ error: error.message });
+	}
+	console.error(error);
+	res.status(error.status || 500).json({ error: error.message });
 });
 
 app.listen(PORT, () => {

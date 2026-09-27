@@ -1,8 +1,13 @@
 import { Geist, Geist_Mono } from 'next/font/google';
 import { MantineProvider, mantineHtmlProps } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
 import Header from '@/components/Header';
-import '@mantine/core/styles.layer.css';
 import './globals.css';
+import '@mantine/core/styles.layer.css';
+import { AuthProvider } from '@/context/AuthContext';
+import { QueryProvider } from '@/context/QueryProvider';
+import { theme, modalProps } from '@/lib/theme';
+import SpotifyConnect from '@/components/SpotifyConnect';
 
 const geistSans = Geist({
 	variable: '--font-geist-sans',
@@ -27,10 +32,22 @@ export default function RootLayout({ children }) {
 			{...mantineHtmlProps}
 		>
 			<body className="min-h-full flex flex-col">
-				<MantineProvider>
-					<Header />
-					<main>{children}</main>
-				</MantineProvider>
+				<QueryProvider>
+					<MantineProvider
+						theme={theme}
+						forceColorScheme="dark"
+					>
+						<ModalsProvider modalProps={modalProps}>
+							<AuthProvider>
+								<Header />
+
+								<div className="flex flex-1 flex-col">
+									<SpotifyConnect>{children}</SpotifyConnect>
+								</div>
+							</AuthProvider>
+						</ModalsProvider>
+					</MantineProvider>
+				</QueryProvider>
 			</body>
 		</html>
 	);

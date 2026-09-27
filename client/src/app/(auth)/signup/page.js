@@ -6,21 +6,22 @@ import { useAuth } from '@/context/AuthContext';
 import { errorMessage } from '@/lib/api';
 import { Eye, EyeSlash } from 'iconsax-react';
 
-function Login() {
-	const { login } = useAuth();
+function Signup() {
+	const { signup } = useAuth();
 	const router = useRouter();
+	const [username, setUsername] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [error, setError] = useState(null);
 
-	const handleLogin = async (e) => {
+	const handleSignup = async (e) => {
 		e.preventDefault();
 		setIsSubmitting(true);
 		setError(null);
 		try {
-			const me = await login(email, password);
+			const me = await signup(username, email, password);
 			router.push(me.spotify_connected ? '/' : '/connect');
 		} catch (err) {
 			setError(errorMessage(err));
@@ -31,11 +32,28 @@ function Login() {
 	return (
 		<main className="flex flex-1 flex-col justify-center p-6 sm:p-10">
 			<div className="mx-auto w-full max-w-md text-black">
-				<h1 className="text-3xl font-bold">Login</h1>
+				<h1 className="text-3xl font-bold">Sign Up</h1>
 				<form
 					className="mt-6"
-					onSubmit={handleLogin}
+					onSubmit={handleSignup}
 				>
+					<div className="relative mt-6">
+						<input
+							id="username"
+							type="text"
+							className="float-input"
+							placeholder="Username"
+							value={username}
+							onChange={(e) => setUsername(e.target.value)}
+							required
+						/>
+						<label
+							htmlFor="username"
+							className="float-label"
+						>
+							Username
+						</label>
+					</div>
 					<div className="relative mt-6">
 						<input
 							id="email"
@@ -63,7 +81,6 @@ function Login() {
 							onChange={(e) => setPassword(e.target.value)}
 							required
 						/>
-
 						<label
 							htmlFor="password"
 							className="float-label"
@@ -80,13 +97,11 @@ function Login() {
 								<EyeSlash
 									size={22}
 									color="currentColor"
-									variant="Broken"
 								/>
 							) : (
 								<Eye
 									size={22}
 									color="currentColor"
-									variant="Broken"
 								/>
 							)}
 						</button>
@@ -97,15 +112,15 @@ function Login() {
 						disabled={isSubmitting}
 						className="bg-black rounded-full p-2 text-white w-full mt-6 hover:bg-[#925FF0] disabled:opacity-50"
 					>
-						{isSubmitting ? 'Logging in…' : 'Login'}
+						{isSubmitting ? 'Creating account…' : 'Signup'}
 					</button>
 				</form>
 				<div className="text-black mt-5 text-center">
 					<Link
-						href="/signup"
+						href="/login"
 						className="hover:text-[#925FF0]"
 					>
-						Don&apos;t have an account? Create one!
+						Already have an account? Login!
 					</Link>
 				</div>
 			</div>
@@ -113,4 +128,4 @@ function Login() {
 	);
 }
 
-export default Login;
+export default Signup;

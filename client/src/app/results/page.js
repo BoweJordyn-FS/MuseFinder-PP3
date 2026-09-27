@@ -1,7 +1,19 @@
-import React from 'react';
+'use client';
+import React, { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import SearchResults from '@/components/SearchResults';
 
-function Results() {
-	return <main className="flex justify-center"></main>;
+function ResultsInner() {
+	const q = useSearchParams().get('q');
+	if (!q)
+		return <p className="p-10 text-gray-500">Search for something first.</p>;
+	return <SearchResults q={q} />;
 }
 
-export default Results;
+export default function Results() {
+	return (
+		<Suspense>
+			<ResultsInner />
+		</Suspense>
+	);
+}

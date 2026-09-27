@@ -3,8 +3,12 @@ const bcrypt = require('bcryptjs');
 const validateEmail = (email) => {
 	return /^\S+@\S+\.\S+$/.test(email);
 };
-
 const userSchema = new mongoose.Schema({
+	username: {
+		type: String,
+		unique: true,
+		required: 'Username is required',
+	},
 	email: {
 		type: String,
 		unique: true,
@@ -20,6 +24,12 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		default: Date.now,
 	},
+	// spotify tokens from the authorization code flow, one set per user
+	spotify: {
+		access_token: String,
+		refresh_token: String,
+		expires_at: Date,
+	},
 });
 userSchema.pre('save', async function () {
 	const user = this;
@@ -27,24 +37,9 @@ userSchema.pre('save', async function () {
 		return;
 	}
 
-	const salt = await new Promise((resolve, reject) => {
-		bcrypt.genSalt(10, (error, salt) =>
-			error ? reject(error) : resolve(salt),
-		);
-	});
-	const hash = await new Promise((resolve, reject) => {
-		bcrypt.hash(user.password, salt, null, (error, hash) =>
-			error ? reject(error) : resolve(hash),
-		);
-	});
-	user.password = hash;
+	user.password = await bcrypt.hash(user.password, 10);
 });
-userSchema.methods.comparePassword = function (candidatePassword, callback) {
-	bcrypt.compare(candidatePassword, this.password, function (error, isMatch) {
-		if (error) {
-			return callback(error);
-		}
-		callback(null, isMatch);
-	});
+userSchema.methods.comparePassword = function (candidatePassword) {
+	return bcrypt.compare(candidatePassword, this.password);
 };
 module.exports = mongoose.model('User', userSchema);
