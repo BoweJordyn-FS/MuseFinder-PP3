@@ -172,7 +172,7 @@ function PlaylistsPanel() {
 								<Trash
 									size={16}
 									variant="Broken"
-									color="white"
+									color="currentColor"
 								/>
 							</button>
 						</div>
