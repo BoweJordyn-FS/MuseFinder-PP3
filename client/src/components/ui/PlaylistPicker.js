@@ -72,8 +72,7 @@ export default function PlaylistPicker({ subject, showText = true }) {
 				>
 					<HeartAdd
 						size={20}
-						color="#925FF0"
-						className="hover:text-[#E9DFFC]"
+						color="currentColor"
 					/>
 					{showText && <span>Save to Playlist</span>}
 				</button>
@@ -133,7 +132,7 @@ export default function PlaylistPicker({ subject, showText = true }) {
 					>
 						<Add
 							size={14}
-							color="white"
+							color="currentColor"
 						/>{' '}
 						New playlist
 					</button>

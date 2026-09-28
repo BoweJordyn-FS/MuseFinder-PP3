@@ -141,7 +141,7 @@ function PlaylistCard({ playlist, onOpen }) {
 							leftSection={
 								<Edit2
 									size={18}
-									color="black"
+									color="#925FF0"
 									variant="Broken"
 								/>
 							}
